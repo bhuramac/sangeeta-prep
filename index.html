@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a1e2c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Sangeeta Prep">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Sangeeta Prep</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Noto+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE warm, encouraging, kid-readable; IDEA a practice notebook from a music class
+   COLOUR kumkum maroon + turmeric + ivory paper; TYPE Baloo 2 headings, Noto Sans body (diacritics)
+   LAYOUT top bar, one column cards, bottom tab bar on phones, side-by-side cards on wide screens */
+:root{--bg:#fbf6ec;--card:#fff;--ink:#2a1a14;--mute:#6f5d52;--line:#eadfcd;--maroon:#7a1e2c;--maroon2:#9b2c3c;--gold:#e0a21b;--goldbg:#fdf1d4;--green:#2f7d4f;--greenbg:#e3f3e8;--amber:#b46a00;--amberbg:#fff0d6;--red:#b3261e;--redbg:#fde7e5;--blue:#2c5a8c;--shadow:0 1px 2px rgba(60,30,10,.08),0 4px 14px rgba(60,30,10,.06)}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Noto Sans",system-ui,sans-serif;-webkit-text-size-adjust:100%}
+body{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:"Baloo 2",system-ui,sans-serif;line-height:1.1;margin:0 0 .4em}
+h1{font-size:30px}h2{font-size:23px}h3{font-size:19px}
+a{color:var(--maroon2)}
+button,select,input,textarea{font:inherit;font-size:16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--maroon);color:#fff;padding:calc(env(safe-area-inset-top) + 8px) 16px 8px;display:flex;align-items:center;gap:10px}
+header.top .logo{font-family:"Baloo 2";font-size:21px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 11px;font-size:13px;border:0;background:rgba(255,255,255,.16);color:#fff;cursor:pointer;min-height:34px}
+.chip.on{background:var(--gold);color:#2a1a14}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr));gap:14px}
+.grid2>.card{margin:0}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.spread{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.mute{color:var(--mute)}.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 18px;border-radius:12px;border:1.5px solid var(--maroon);background:#fff;color:var(--maroon);font-weight:600;cursor:pointer;text-decoration:none}
+.btn.primary{background:var(--maroon);color:#fff}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:#2a1a14}
+.btn.big{min-height:60px;font-size:18px;border-radius:16px;padding:12px 22px}
+.btn.ghost{border-color:var(--line);color:var(--ink)}
+.btn.sm{min-height:38px;padding:6px 12px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:default}
+.btn:focus-visible,.chip:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.big-n{font-family:"Baloo 2";font-size:44px;line-height:1;font-weight:700;color:var(--maroon)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.lv-new{background:#efe9e0;color:#6f5d52}.lv-learning{background:var(--redbg);color:var(--red)}.lv-shaky{background:var(--amberbg);color:var(--amber)}.lv-ready{background:var(--greenbg);color:var(--green)}
+.bar{height:10px;border-radius:99px;background:#f0e7d8;overflow:hidden;display:flex}
+.bar>span{display:block;height:100%}
+.items{display:flex;flex-wrap:wrap;gap:8px}
+.item-chip{border:1.5px solid var(--line);border-radius:12px;padding:8px 12px;background:#fff;cursor:pointer;min-height:44px;text-align:left;display:flex;flex-direction:column;gap:2px}
+.item-chip b{font-weight:600;font-size:15px}
+.item-chip.ready{border-color:#9fd1b1;background:#f3fbf6}.item-chip.shaky{border-color:#f0c780;background:#fffaf0}.item-chip.learning{border-color:#f0b0aa;background:#fff7f6}
+.meta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:15px}
+.meta dt{color:var(--mute)}.meta dd{margin:0;font-weight:600}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs a{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 2px 9px;text-decoration:none;color:var(--mute);font-size:12px;font-weight:600}
+nav.tabs a svg{width:24px;height:24px}
+nav.tabs a.on{color:var(--maroon)}
+.modal-bg{position:fixed;inset:0;background:rgba(30,15,10,.45);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--bg);width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom))}
+@media(min-width:700px){.modal-bg{align-items:center}.modal{border-radius:20px}}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer}
+.check input{width:24px;height:24px;flex:none;margin-top:1px;accent-color:var(--maroon)}
+.rec-btn{width:96px;height:96px;border-radius:50%;border:0;background:var(--red);color:#fff;font-weight:700;font-size:16px;cursor:pointer;box-shadow:0 0 0 6px var(--redbg)}
+.rec-btn.on{animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px var(--redbg)}}
+@media (prefers-reduced-motion:reduce){.rec-btn.on{animation:none}}
+.tuner{display:flex;align-items:center;gap:14px}
+.tuner .sw{font-family:"Baloo 2";font-size:38px;font-weight:700;width:90px;text-align:center}
+.needle{flex:1;height:26px;border-radius:99px;background:linear-gradient(90deg,var(--redbg),var(--greenbg) 40%,var(--greenbg) 60%,var(--redbg));position:relative}
+.needle i{position:absolute;top:-4px;width:4px;height:34px;background:var(--ink);border-radius:2px;left:50%;transition:left .08s}
+.score-ring{width:92px;height:92px;flex:none}
+canvas.graph{width:100%;height:220px;display:block;background:#fffdf8;border:1px solid var(--line);border-radius:12px}
+.tala-row{display:flex;flex-wrap:wrap;gap:6px}
+.beat{min-width:58px;padding:10px 6px;border-radius:10px;background:#fff;border:1.5px solid var(--line);text-align:center;font-weight:600;font-size:14px}
+.beat.now{background:var(--gold);border-color:var(--gold)}
+.beat small{display:block;font-weight:400;color:var(--mute);font-size:11px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(90px + env(safe-area-inset-bottom));background:var(--ink);color:#fff;padding:10px 16px;border-radius:12px;z-index:60;font-size:14px;max-width:90vw}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper button{width:44px;height:44px;border-radius:10px;border:1.5px solid var(--line);background:#fff;font-size:20px;cursor:pointer}
+.stepper output{min-width:56px;text-align:center;font-weight:700;font-size:18px}
+input[type=text],input[type=url],input[type=number],select,textarea{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+label.f{display:block;margin:10px 0 4px;font-weight:600;font-size:14px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+td.n,th.n{text-align:right;white-space:nowrap}
+.flash{min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:10px}
+.flash .q{font-family:"Baloo 2";font-size:24px}
+.flash .a{font-size:20px;font-weight:600;color:var(--maroon)}
+.lotus{display:inline-block;width:22px;height:22px}
+.banner{border-radius:12px;padding:10px 14px;margin-bottom:12px;font-size:14px}
+.banner.warn{background:var(--amberbg);color:#6a3e00}.banner.info{background:var(--goldbg)}
+.hide{display:none!important}
+.timer{font-family:"Baloo 2";font-size:22px;font-weight:700}
+@media(max-width:600px){.stack thead{display:none}.stack tr{display:grid;padding-block:8px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8.5em;text-align:start!important;width:auto!important}.stack td::before{content:attr(data-l);float:inline-start;width:8em;margin-inline-start:-8.5em;color:var(--mute);font-size:13px}h1{font-size:26px}.big-n{font-size:38px}main{padding:12px}}
+@media(min-width:900px){nav.tabs{top:0;bottom:auto;left:auto;right:16px;width:auto;grid-template-columns:repeat(5,auto);background:transparent;border:0;padding:calc(env(safe-area-inset-top) + 6px) 0 0}nav.tabs a{color:#f3d9dd;flex-direction:row;gap:6px;padding:10px 12px;font-size:14px}nav.tabs a.on{color:#fff;text-decoration:underline;text-underline-offset:6px}nav.tabs a svg{width:20px;height:20px}header.top{padding-right:540px}body{padding-bottom:20px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">Sangeeta Prep</div>
+  <button class="chip" id="tanpuraChip" aria-pressed="false" title="Tanpura in G">Tanpura G</button>
+  <button class="chip" id="syncChip">Drive…</button>
+</header>
+<main id="view"></main>
+<nav class="tabs" id="tabs">
+  <a href="#home" data-t="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+  <a href="#practice" data-t="practice"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>Practice</a>
+  <a href="#mock" data-t="mock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Mock test</a>
+  <a href="#progress" data-t="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progress</a>
+  <a href="#parent" data-t="parent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Parent</a>
+</nav>
+<div id="modalRoot"></div>
+
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+<script>
+/* ===== CONFIG: paste your Google OAuth Client ID here (see SETUP.md). It can also be entered in Parent > Settings. ===== */
+const CONFIG = { clientId: '' };
+</script>
+<script>
+{
+'use strict';
+/* ====================== DATA ====================== */
+const EXAM_DATE = '2026-12-28';
+const SW = {S:0,R1:112,R2:204,G2:316,G3:386,M1:498,M2:590,P:702,D1:814,D2:884,N2:996,N3:1088};
+const SWN = {S:'Sa',R1:'Ri',R2:'Ri',G2:'Ga',G3:'Ga',M1:'Ma',M2:'Ma',P:'Pa',D1:'Dha',D2:'Dha',N2:'Ni',N3:'Ni'};
+const RAGAS = {
+ mmg:{n:'Māyāmāḷavagauḷa',m:'15th mēḷakarta',a:'S R1 G3 M1 P D1 N3 Ṡ',v:'Ṡ N3 D1 P M1 G3 R1 S',s:['S','R1','G3','M1','P','D1','N3']},
+ malahari:{n:'Malahari',m:'janya of 15th mēḷa Māyāmāḷavagauḷa',a:'S R1 M1 P D1 Ṡ',v:'Ṡ D1 P M1 G3 R1 S',s:['S','R1','G3','M1','P','D1']},
+ mohana:{n:'Mōhana',m:'janya of 28th mēḷa Harikāmbhōji',a:'S R2 G3 P D2 Ṡ',v:'Ṡ D2 P G3 R2 S',s:['S','R2','G3','P','D2']},
+ kalyani:{n:'Kalyāṇi',m:'65th mēḷakarta',a:'S R2 G3 M2 P D2 N3 Ṡ',v:'Ṡ N3 D2 P M2 G3 R2 S',s:['S','R2','G3','M2','P','D2','N3']},
+ shuddhasaveri:{n:'Shuddha Sāvēri',m:'janya of 29th mēḷa Shankarābharaṇam',a:'S R2 M1 P D2 Ṡ',v:'Ṡ D2 P M1 R2 S',s:['S','R2','M1','P','D2']},
+ kambhoji:{n:'Kāmbhōji',m:'janya of 28th mēḷa Harikāmbhōji (bhāṣhānga)',a:'S R2 G3 M1 P D2 Ṡ',v:'Ṡ N2 D2 P M1 G3 R2 S N3 P D2 S',s:['S','R2','G3','M1','P','D2','N2','N3']},
+ anandabhairavi:{n:'Ānandabhairavi',m:'janya of 20th mēḷa Naṭabhairavi (bhāṣhānga, vakra)',a:'S G2 R2 G2 M1 P D2 P Ṡ',v:'Ṡ N2 D2 P M1 G2 R2 S',s:['S','R2','G2','M1','P','D2','N2']},
+ shankarabharanam:{n:'Shankarābharaṇam',m:'29th mēḷakarta',a:'S R2 G3 M1 P D2 N3 Ṡ',v:'Ṡ N3 D2 P M1 G3 R2 S',s:['S','R2','G3','M1','P','D2','N3']},
+ saveri:{n:'Sāvēri',m:'janya of 15th mēḷa Māyāmāḷavagauḷa',a:'S R1 M1 P D1 Ṡ',v:'Ṡ N3 D1 P M1 G3 R1 S',s:['S','R1','G3','M1','P','D1','N3']},
+ arabhi:{n:'Ārabhi',m:'janya of 29th mēḷa Shankarābharaṇam',a:'S R2 M1 P D2 Ṡ',v:'Ṡ N3 D2 P M1 G3 R2 S',s:['S','R2','G3','M1','P','D2','N3']},
+ hamsadhvani:{n:'Hamsadhvani',m:'janya of 29th mēḷa Dhīra Shankarābharaṇam',a:'S R2 G3 P N3 Ṡ',v:'Ṡ N3 P G3 R2 S',s:['S','R2','G3','P','N3']},
+};
+const TALAS = {
+ adi:{n:'Ādi (chaturashra jāti tripuṭa)',g:['L4','D','D']},
+ dhruva:{n:'Chaturashra jāti Dhruva',g:['L4','D','L4','L4']},
+ matya:{n:'Chaturashra jāti Maṭhya',g:['L4','D','L4']},
+ rupaka:{n:'Chaturashra jāti Rūpaka',g:['D','L4']},
+ jhampe:{n:'Mishra jāti Jhampe',g:['L7','U','D']},
+ triputa3:{n:'Trishra jāti Tripuṭa',g:['L3','D','D']},
+ ata:{n:'Khaṇḍa jāti Aṭṭa',g:['L5','L5','D','D']},
+ eka:{n:'Chaturashra jāti Ēka',g:['L4']},
+ tishranade:{n:'Tishra naḍe',g:['L4'],note:'3 swaras per beat'},
+ chaturashranade:{n:'Chaturashra naḍe',g:['L4'],note:'4 swaras per beat'},
+};
+const SECTIONS = [
+ {id:'sarale',n:'Saraḷe Varase',cnt:10,req:7,sc:1,ec:2,mk:1,sp:3,page:1,vid:['XS7J3cRH2CM']},
+ {id:'janti',n:'Janṭi Varase',cnt:12,req:5,sc:1,ec:1,mk:3,sp:3,page:3},
+ {id:'tara',n:'Tārasthāyi Varase',cnt:7,req:3,sc:1,ec:1,mk:1,sp:3,page:9},
+ {id:'mandra',n:'Mandrasthāyi Varase',cnt:5,req:3,sc:1,ec:1,mk:1,sp:3,page:11,vid:['GDPUDvCe7Zg']},
+ {id:'datu',n:'Dāṭu Varase',cnt:5,req:3,sc:1,ec:1,mk:1,sp:3,page:12,vid:['ynEu3Lr36-M']},
+ {id:'alank',n:'Alankāra',cnt:7,req:5,sc:1,ec:1,mk:3,sp:3,page:13},
+ {id:'pillari',n:'Piḷḷāri Geetam',cnt:4,req:4,sc:1,ec:1,mk:4,sp:1},
+ {id:'samanya',n:'Sanchāri Geetam',cnt:8,req:5,sc:1,ec:1,mk:4,sp:1},
+ {id:'nottu',n:'Nōṭṭuswara',cnt:2,req:2,sc:0,ec:1,mk:3,sp:1},
+ {id:'bhajan',n:'Bhajan',cnt:1,req:1,sc:1,ec:0,mk:3,sp:1},
+];
+const JANTI_V = ['F1Vld8BazMQ','09MsalGVNHA','q0Ksk5-WbhU','2aAywuFouXw','T_cHQkrEBDw'];
+const ALANK = [['dhruva','5h-eFksrhBs'],['matya','Q5SbmtAICOo'],['rupaka','ta35L-5909k'],['jhampe','DsDZKX3uG_M'],['triputa3','8gMo7TVgpTE'],['ata','usMN4cSQbv8'],['eka','cvEbmVdGvJ4']];
+const COMPS = {
+ 'pillari-1':{t:'Shrī Gaṇanātha (Lambōdara Lakumikara)',r:'malahari',tl:'rupaka',c:'Purandaradāsa',b:'Sanskrit',p:22,v:'Ea0q-z2gfSA'},
+ 'pillari-2':{t:'Kunda Gaura Gaurī Vara',r:'malahari',tl:'rupaka',c:'Purandaradāsa',b:'Sanskrit',p:23,v:'o8zeh10mRRA'},
+ 'pillari-3':{t:'Kereya Nīranu Kerege Chelli',r:'malahari',tl:'triputa3',c:'Purandaradāsa',b:'Kannaḍa',p:24,v:'Rx5Sg5-wbPE'},
+ 'pillari-4':{t:'Padumanābha Paramapuruśha',r:'malahari',tl:'triputa3',c:'Purandaradāsa',b:'Sanskrit',p:25,v:'2cXrJjdWI2I'},
+ 'samanya-1':{t:'Varavīṇā Mṛdupāṇi',r:'mohana',tl:'rupaka',c:'Unknown',b:'Sanskrit',p:27,v:'GPEoWRZWoV4'},
+ 'samanya-2':{t:'Kamalajādaḷa Vimala Sunayana',r:'kalyani',tl:'triputa3',c:'Unknown',b:'Sanskrit',p:28,v:'3HA7lC1RLdA'},
+ 'samanya-3':{t:'Ānalēkara Unnatōnnata',r:'shuddhasaveri',tl:'triputa3',c:'Purandaradāsa',b:'Bhāṇḍīra',p:29},
+ 'samanya-4':{t:'Mandaradhārē Mōkśhamurārē',r:'kambhoji',tl:'adi',c:'Paiḍāla Gurumūrty Shāstry',b:'Sanskrit',p:30,v:'sduHSi6soro'},
+ 'samanya-5':{t:'Kamala Sulōchana',r:'anandabhairavi',tl:'adi',c:'Paiḍāla Gurumūrty Shāstry',b:'Sanskrit',p:31,v:'iBBv9vPX3YY'},
+ 'samanya-6':{t:'Gōvindāchyuta',r:'shankarabharanam',tl:'matya',c:'Unknown',b:'Sanskrit',p:32},
+ 'samanya-7':{t:'Janakasutā Kucha Kunkuma',r:'saveri',tl:'rupaka',c:'Unknown',b:'Sanskrit',p:33},
+ 'samanya-8':{t:'Rē Rē Shrī Rāmachandra',r:'arabhi',tl:'triputa3',c:'Paiḍāla Gurumūrty Shāstry',b:'Sanskrit',p:34},
+ 'nottu-1':{t:'Shakti Sahita Gaṇapatim',r:'shankarabharanam',tl:'tishranade',c:'Muthuswāmi Dīkshitar',b:'Sanskrit',p:38},
+ 'nottu-2':{t:'Varashiva Bālam Vallī Lōlam',r:'shankarabharanam',tl:'chaturashranade',c:'Muthuswāmi Dīkshitar',b:'Sanskrit',p:39,v:'kg_aAODvSt4'},
+ 'bhajan-1':{t:'Jaya Gaṇēsha Jaya Gaṇēsha',r:'hamsadhvani',tl:'eka',c:'Unknown',b:'Sanskrit',p:42,v:'e2onWiZyKTQ'},
+};
+const FACTS = ['raga','aro','tala','comp','bhasha'];
+const FACT_N = {raga:'Rāga',aro:'Ārōhaṇa / avarōhaṇa',tala:'Tāḷa',comp:'Vāggēyakāra',bhasha:'Bhāṣhā'};
+const RULES_FULL = [
+ 'No books, notes or devices during the exam. (In mock mode the notation is hidden.)',
+ 'Bring your own shruti and set it to G. Tune before you start.',
+ 'Keep tāḷa with your hands the whole time.',
+ 'Swarāvaḷi in 3 speeds. Everything else in any one speed.',
+ 'Sing both swara and sāhitya for every song except the Bhajan.',
+ 'Sing every item from start to finish, clearly and with bhāva.',
+ 'Know the title, rāga (name, ārōhaṇa, avarōhaṇa), tāḷa, vāggēyakāra and bhāṣhā of every song.',
+ 'Say your Guru’s name respectfully: “{GURU}”.',
+ 'Look neat, care for your instrument, and do namaskāra at the start and end.',
+ 'Prepare the full syllabus. An unprepared item costs marks.',
+ 'Small slips are OK. Keep tāḷa and laya steady and always finish.'
+];
+const RULES_SHORT = [0,1,2,3,4,10];
+const PRAISE = ['Wonderful practice!','Your Guru would be proud!','Shābhāsh! Keep going!','Every day you sound better.','Lovely effort today!','Step by step, song by song!'];
+const REMARKS = ['Lost tāḷa','Incomplete','Speed not kept','Sāhitya / pronunciation','Shruti drifted','Swara mistakes','Hesitant start','Excellent!'];
+
+const ITEMS = [];
+for (const s of SECTIONS) for (let i=1;i<=s.cnt;i++) {
+  const id = s.id+'-'+i; const it = {id, sec:s.id, i, sp:s.sp, req:i<=s.req};
+  if (COMPS[id]) { const c=COMPS[id]; Object.assign(it,{t:c.t,r:c.r,tl:c.tl,c:c.c,b:c.b,p:c.p,v:c.v?[c.v]:[],comp:true}); }
+  else {
+    it.r='mmg'; it.tl='adi'; it.p=s.page; it.v=s.vid?[...s.vid]:[];
+    const base = {sarale:'Saraḷe',janti:'Janṭi',tara:'Tārasthāyi',mandra:'Mandrasthāyi',datu:'Dāṭu',alank:'Alankāra'}[s.id];
+    it.t = base+' '+i;
+    if (s.id==='janti' && JANTI_V[i-1]) it.v=[JANTI_V[i-1]];
+    if (s.id==='alank') { it.tl=ALANK[i-1][0]; it.v=[ALANK[i-1][1]]; it.t='Alankāra '+i+' · '+TALAS[it.tl].n.replace(/ jāti/,'').replace('Chaturashra ','');}
+  }
+  ITEMS.push(it);
+}
+const ITEM = Object.fromEntries(ITEMS.map(x=>[x.id,x]));
+const SEC = Object.fromEntries(SECTIONS.map(x=>[x.id,x]));
+
+/* ====================== UTIL ====================== */
+const $ = (s,r=document)=>r.querySelector(s);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid = () => Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const now = () => Date.now();
+const dayKey = t => { const d=new Date(t); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
+const clamp = (x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const fmtTime = s => { s=Math.max(0,Math.round(s)); return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+const ago = t => { const m=Math.round((now()-t)/60000); if(m<1)return 'just now'; if(m<60)return m+' min ago'; const h=Math.round(m/60); if(h<24)return h+' h ago'; return Math.round(h/24)+' d ago'; };
+const daysTo = d => Math.ceil((new Date(d+'T00:00:00') - new Date(dayKey(now())+'T00:00:00'))/86400000);
+function toast(msg,ms=2600){ const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),ms); }
+const ragaOf = it => RAGAS[it.r]; const talaOf = it => TALAS[it.tl];
+function itemTitle(id){ const it=ITEM[id]; if(!it) return id; if(it.sec==='bhajan' && S.settings.bhajan) return S.settings.bhajan.t; return it.t; }
+function itemInfo(id){ const it={...ITEM[id]}; if(it.sec==='bhajan'&&S.settings.bhajan){ const b=S.settings.bhajan; Object.assign(it,{t:b.t,r:b.r,tl:b.tl,c:b.c,b:b.b}); } return it; }
+
+/* ====================== STORAGE (IndexedDB, offline-first) ====================== */
+let db;
+function idb(){ return new Promise((res,rej)=>{ const r=indexedDB.open('sangeeta-prep',1); r.onupgradeneeded=()=>{ r.result.createObjectStore('kv'); r.result.createObjectStore('audio'); }; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }); }
+function iget(store,key){ return new Promise((res,rej)=>{ const t=db.transaction(store).objectStore(store).get(key); t.onsuccess=()=>res(t.result); t.onerror=()=>rej(t.error); }); }
+function iput(store,key,val){ return new Promise((res,rej)=>{ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).put(val,key); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+function idel(store,key){ return new Promise((res)=>{ const tx=db.transaction(store,'readwrite'); tx.objectStore(store).delete(key); tx.oncomplete=()=>res(); tx.onerror=()=>res(); }); }
+
+const blankState = () => ({ schema:1, settings:{guru:'', sa:392, bhajan:null, u:0}, links:{}, attempts:{}, facts:{}, sessions:{}, mocks:{} });
+let S = blankState();
+/* every record: {id, u (updated ms), ...}; merge = union by id, newer u wins */
+function mergeState(a,b){
+  const out = blankState();
+  out.settings = (b.settings?.u||0) > (a.settings?.u||0) ? {...a.settings,...b.settings} : {...b.settings,...a.settings};
+  for (const k of ['attempts','facts','sessions','mocks']) { out[k]={...(a[k]||{})}; for (const [id,r] of Object.entries(b[k]||{})) if(!out[k][id] || (r.u||0)>(out[k][id].u||0)) out[k][id]=r; }
+  out.links={...(a.links||{})}; for (const [id,r] of Object.entries(b.links||{})) if(!out.links[id] || (r.u||0)>(out.links[id].u||0)) out.links[id]=r;
+  return out;
+}
+let saveT;
+function persist(){ clearTimeout(saveT); saveT=setTimeout(async()=>{ try{ await iput('kv','state',S); }catch(e){ console.error(e); } scheduleSync(); },150); }
+function put(coll, rec){ rec.u=now(); S[coll][rec.id]=rec; persist(); return rec; }
+
+/* ====================== GOOGLE DRIVE SYNC ====================== */
+const DRIVE = { token:null, exp:0, folder:null, recFolder:null, fileId:null, busy:false, last:0, err:null, gis:false };
+const ls = { get:k=>{try{return localStorage.getItem(k)}catch(e){return null}}, set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}} };
+const clientId = () => CONFIG.clientId || ls.get('sp_clientId') || '';
+function loadGis(){ return new Promise((res,rej)=>{ if(window.google?.accounts?.oauth2) return res(); const s=document.createElement('script'); s.src='https://accounts.google.com/gsi/client'; s.onload=()=>res(); s.onerror=()=>rej(new Error('Could not load Google sign-in (offline?)')); document.head.appendChild(s); }); }
+let tokenClient;
+async function connectDrive(interactive=true){
+  if(!clientId()){ if(interactive){ location.hash='#settings'; toast('Add your Google Client ID first (see SETUP.md)'); } return false; }
+  try { await loadGis(); } catch(e){ toast(e.message); return false; }
+  return new Promise(res=>{
+    tokenClient = google.accounts.oauth2.initTokenClient({ client_id:clientId(), scope:'https://www.googleapis.com/auth/drive.file',
+      callback: r=>{ if(r.error){ DRIVE.err=r.error; renderSync(); return res(false); } DRIVE.token=r.access_token; DRIVE.exp=now()+(r.expires_in-120)*1000; ls.set('sp_tok',JSON.stringify({t:DRIVE.token,e:DRIVE.exp})); ls.set('sp_connected','1'); DRIVE.err=null; renderSync(); sync(); res(true); },
+      error_callback: e=>{ DRIVE.err=e.type||'popup'; renderSync(); res(false); } });
+    tokenClient.requestAccessToken({prompt: ls.get('sp_connected')?'':'consent'});
+  });
+}
+function tokenOk(){ return DRIVE.token && now()<DRIVE.exp; }
+async function gapi(method,url,body,headers={}){
+  const r = await fetch(url,{method,headers:{Authorization:'Bearer '+DRIVE.token,...headers},body});
+  if(r.status===401){ DRIVE.token=null; renderSync(); throw new Error('auth'); }
+  if(!r.ok) throw new Error('Drive '+r.status+': '+(await r.text()).slice(0,200));
+  return r;
+}
+const API='https://www.googleapis.com/drive/v3/files', UP='https://www.googleapis.com/upload/drive/v3/files';
+async function findFile(name,parent,folder){
+  const q = `name='${name.replace(/'/g,"\\'")}' and trashed=false`+(parent?` and '${parent}' in parents`:'')+(folder?` and mimeType='application/vnd.google-apps.folder'`:'');
+  const r = await (await gapi('GET',API+'?spaces=drive&fields=files(id,name,modifiedTime)&q='+encodeURIComponent(q))).json();
+  return r.files?.[0]?.id||null;
+}
+async function mkFolder(name,parent){ const r=await gapi('POST',API+'?fields=id',JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:parent?[parent]:undefined}),{'Content-Type':'application/json'}); return (await r.json()).id; }
+async function upload(meta,blob,mime){
+  const b='spb'+uid(); const body=new Blob([`--${b}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${b}\r\nContent-Type: ${mime}\r\n\r\n`,blob,`\r\n--${b}--`]);
+  const r=await gapi('POST',UP+'?uploadType=multipart&fields=id',body,{'Content-Type':'multipart/related; boundary='+b}); return (await r.json()).id;
+}
+async function ensureFolders(){
+  if(!DRIVE.folder){ DRIVE.folder = ls.get('sp_folder') || await findFile('Sangeeta Prep',null,true) || await mkFolder('Sangeeta Prep'); ls.set('sp_folder',DRIVE.folder); }
+  if(!DRIVE.recFolder){ DRIVE.recFolder = ls.get('sp_recfolder') || await findFile('recordings',DRIVE.folder,true) || await mkFolder('recordings',DRIVE.folder); ls.set('sp_recfolder',DRIVE.recFolder); }
+}
+let syncT; function scheduleSync(){ clearTimeout(syncT); syncT=setTimeout(sync,3000); }
+async function sync(){
+  if(!tokenOk()||DRIVE.busy||!navigator.onLine){ renderSync(); return; }
+  DRIVE.busy=true; renderSync();
+  try{
+    try { await ensureFolders(); } catch(e){ if(String(e.message).includes('404')){ ls.set('sp_folder',''); ls.set('sp_recfolder',''); DRIVE.folder=DRIVE.recFolder=null; await ensureFolders(); } else throw e; }
+    DRIVE.fileId = DRIVE.fileId || await findFile('progress.json',DRIVE.folder);
+    if(DRIVE.fileId){ const remote = await (await gapi('GET',API+'/'+DRIVE.fileId+'?alt=media')).json(); S = mergeState(S, remote); }
+    await uploadPendingAudio();
+    await enforceRetention();
+    const json = JSON.stringify(S);
+    if(DRIVE.fileId) await gapi('PATCH',UP+'/'+DRIVE.fileId+'?uploadType=media',json,{'Content-Type':'application/json'});
+    else DRIVE.fileId = await upload({name:'progress.json',parents:[DRIVE.folder]},new Blob([json]),'application/json');
+    const today = dayKey(now());
+    if(ls.get('sp_snap')!==today){ const nm='progress-'+today+'.json'; if(!(await findFile(nm,DRIVE.folder))) await upload({name:nm,parents:[DRIVE.folder]},new Blob([json]),'application/json'); ls.set('sp_snap',today); }
+    await iput('kv','state',S);
+    DRIVE.last=now(); DRIVE.err=null;
+  }catch(e){ console.error(e); DRIVE.err = e.message==='auth'?null:e.message; }
+  DRIVE.busy=false; renderSync(); if(curView!=='mockrun') rerenderSoft();
+}
+async function uploadPendingAudio(){
+  for(const a of Object.values(S.attempts)){
+    if(a.audio && !a.audio.drive && !a.audio.deleted){
+      const rec = await iget('audio',a.id); if(!rec) continue;
+      const ext = rec.type.includes('mp4')?'m4a':rec.type.includes('ogg')?'ogg':'webm';
+      const nm = `${a.item}_${dayKey(a.ts)}_${a.id}.${ext}`;
+      a.audio.drive = await upload({name:nm,parents:[DRIVE.recFolder]},rec,rec.type||'audio/webm'); a.u=now();
+    }
+    if(a.audio?.pendingDel && a.audio.drive){ try{ await gapi('DELETE',API+'/'+a.audio.drive); }catch(e){ if(e.message==='auth') throw e; } a.audio.drive=null; a.audio.pendingDel=false; a.u=now(); }
+  }
+}
+async function enforceRetention(){
+  const by={}; for(const a of Object.values(S.attempts)) if(a.audio && !a.audio.deleted) (by[a.item]=by[a.item]||[]).push(a);
+  for(const list of Object.values(by)){ list.sort((x,y)=>y.ts-x.ts); for(const a of list.slice(2)){ await idel('audio',a.id); a.audio.deleted=true; if(a.audio.drive){ if(tokenOk()){ try{ await gapi('DELETE',API+'/'+a.audio.drive); a.audio.drive=null; }catch(e){ a.audio.pendingDel=true; } } else a.audio.pendingDel=true; } a.u=now(); } }
+}
+async function audioUrl(a){
+  if(!a.audio||a.audio.deleted) return null;
+  const b = await iget('audio',a.id); if(b) return URL.createObjectURL(b);
+  if(a.audio.drive && tokenOk()){ const r=await gapi('GET',API+'/'+a.audio.drive+'?alt=media'); const bl=await r.blob(); await iput('audio',a.id,bl); return URL.createObjectURL(bl); }
+  return null;
+}
+function renderSync(){
+  const c=$('#syncChip'); if(!c) return;
+  let t;
+  if(!clientId()) t='Drive: set up';
+  else if(DRIVE.busy) t='Syncing…';
+  else if(!navigator.onLine) t='Offline · saved here';
+  else if(!tokenOk()) t= ls.get('sp_connected') ? 'Tap to sync' : 'Connect Drive';
+  else if(DRIVE.err) t='Sync issue';
+  else t= DRIVE.last ? 'Synced '+ago(DRIVE.last) : 'Drive connected';
+  c.textContent=t; c.classList.toggle('on', tokenOk() && !DRIVE.err);
+}
+$('#syncChip').onclick = async()=>{ if(!clientId()){ location.hash='#settings'; return; } if(!tokenOk()) await connectDrive(true); else sync(); if(DRIVE.err) toast(DRIVE.err,5000); };
+function ensureTokenOnGesture(){ if(clientId() && ls.get('sp_connected') && !tokenOk() && navigator.onLine) connectDrive(false); }
+addEventListener('online',()=>{ renderSync(); sync(); }); addEventListener('offline',renderSync);
+setInterval(renderSync,30000);
+
+/* ====================== AUDIO: context, tanpura, clicks ====================== */
+let AC;
+function ctx(){ if(!AC){ AC=new (window.AudioContext||window.webkitAudioContext)(); } if(AC.state==='suspended') AC.resume(); try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){} return AC; }
+let tanpura = {on:false,timer:null,gain:null,next:0,i:0,wave:null};
+function tanpuraWave(c){ if(tanpura.wave) return tanpura.wave; const n=24, re=new Float32Array(n), im=new Float32Array(n); for(let k=1;k<n;k++){ im[k]=Math.pow(k,-0.9)*(k%2?1:0.8)*(k>6&&k<14?1.6:1); } tanpura.wave=c.createPeriodicWave(re,im); return tanpura.wave; }
+function pluck(c,f,t,dur=3.6,amp=0.18){
+  const o=c.createOscillator(), o2=c.createOscillator(), g=c.createGain();
+  o.setPeriodicWave(tanpuraWave(c)); o2.setPeriodicWave(tanpuraWave(c)); o.frequency.value=f; o2.frequency.value=f*1.0017;
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(amp,t+0.02); g.gain.exponentialRampToValueAtTime(amp*0.5,t+0.6); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); o2.connect(g); g.connect(tanpura.gain); o.start(t); o2.start(t); o.stop(t+dur+0.05); o2.stop(t+dur+0.05);
+}
+function tanpuraStart(){
+  const c=ctx(); const sa=S.settings.sa||392;
+  tanpura.gain=c.createGain(); tanpura.gain.gain.value=(+ls.get('sp_tvol')||0.7); tanpura.gain.connect(c.destination);
+  const seq=[sa*0.75, sa, sa, sa/2]; // mandra Pa, Sa, Sa, mandra Sa
+  const gaps=[1.0,0.55,0.55,1.4];
+  tanpura.next=c.currentTime+0.05; tanpura.i=0; tanpura.on=true;
+  const tick=()=>{ while(tanpura.next < c.currentTime+0.6){ pluck(c,seq[tanpura.i],tanpura.next); tanpura.next+=gaps[tanpura.i]; tanpura.i=(tanpura.i+1)%4; } };
+  tick(); tanpura.timer=setInterval(tick,150); updTanpuraChip();
+}
+function tanpuraStop(){ clearInterval(tanpura.timer); tanpura.on=false; if(tanpura.gain){ const g=tanpura.gain; g.gain.setTargetAtTime(0,ctx().currentTime,0.15); setTimeout(()=>g.disconnect(),800); } updTanpuraChip(); }
+function updTanpuraChip(){ const c=$('#tanpuraChip'); c.classList.toggle('on',tanpura.on); c.setAttribute('aria-pressed',tanpura.on); c.textContent= tanpura.on?'Tanpura G ●':'Tanpura G'; }
+$('#tanpuraChip').onclick=()=>{ tanpura.on?tanpuraStop():tanpuraStart(); };
+function click(c,t,strong){ const o=c.createOscillator(), g=c.createGain(); o.frequency.value=strong?1400:900; g.gain.setValueAtTime(strong?0.5:0.25,t); g.gain.exponentialRampToValueAtTime(0.001,t+0.07); o.connect(g); g.connect(c.destination); o.start(t); o.stop(t+0.08); }
+
+/* ====================== PITCH ANALYSIS ====================== */
+function yin(x,off,W,minT,maxT,fs,d,cm){
+  for(let t=1;t<=maxT;t++){ let s=0; for(let j=0;j<W;j++){ const v=x[off+j]-x[off+j+t]; s+=v*v; } d[t]=s; }
+  let run=0; cm[0]=1; for(let t=1;t<=maxT;t++){ run+=d[t]; cm[t]= run? d[t]*t/run : 1; }
+  let tau=-1;
+  for(let t=minT;t<=maxT;t++){ if(cm[t]<0.15){ while(t+1<=maxT && cm[t+1]<cm[t]) t++; tau=t; break; } }
+  if(tau<0){ let b=minT; for(let t=minT;t<=maxT;t++) if(cm[t]<cm[b]) b=t; if(cm[b]<0.3) tau=b; else return 0; }
+  let tt=tau; if(tau>1 && tau<maxT){ const a=cm[tau-1],b=cm[tau],c=cm[tau+1],den=a-2*b+c; if(den) tt=tau+0.5*(a-c)/den; }
+  return fs/tt;
+}
+function decimate(x,sr){ const f=Math.max(1,Math.round(sr/11025)); const n=Math.floor(x.length/f); const y=new Float32Array(n); for(let i=0;i<n;i++){ let s=0; for(let k=0;k<f;k++) s+=x[i*f+k]; y[i]=s/f; } return {y,fs:sr/f}; }
+async function analyzeSamples(raw,sr,saHz,allowed,opts={}){
+  const {y,fs}=decimate(raw,sr); const W=512, maxT=Math.floor(fs/100), minT=Math.max(2,Math.floor(fs/1300)), hop=Math.round(fs*0.04);
+  const nF=Math.max(0,Math.floor((y.length-W-maxT)/hop)); const d=new Float32Array(maxT+1), cm=new Float32Array(maxT+1);
+  const rms=new Float32Array(nF); for(let i=0;i<nF;i++){ let s=0; const o=i*hop; for(let j=0;j<W;j++) s+=y[o+j]*y[o+j]; rms[i]=Math.sqrt(s/W); }
+  const sorted=[...rms].sort((a,b)=>a-b); const p95=sorted[Math.floor(sorted.length*0.95)]||0; const gate=Math.max(0.004,p95*0.12);
+  const cents=new Float32Array(nF).fill(NaN);
+  for(let i=0;i<nF;i++){ if(rms[i]<gate) continue; const f=yin(y,i*hop,W,minT,maxT,fs,d,cm); if(f>0) cents[i]=1200*Math.log2(f/saHz); if(opts.yieldEvery && i%opts.yieldEvery===0) await new Promise(r=>setTimeout(r)); }
+  // median-of-3 smoothing to remove octave blips
+  const c2=new Float32Array(nF).fill(NaN); for(let i=1;i<nF-1;i++){ const a=[cents[i-1],cents[i],cents[i+1]]; if(a.some(isNaN)){ c2[i]=cents[i]; continue; } a.sort((p,q)=>p-q); c2[i]=a[1]; }
+  return summarize(c2,hop/fs,nF*hop/fs,saHz,allowed,opts);
+}
+function nearest(cls,allowed){ let best=null,bd=1e9; for(const n of allowed){ for(const p of [SW[n],SW[n]+1200,SW[n]-1200]){ const dd=cls-p; if(Math.abs(dd)<Math.abs(bd)){ bd=dd; best=n; } } } return {n:best,dev:bd}; }
+function summarize(c,dt,dur,saHz,allowed,opts){
+  const voiced=[]; for(let i=0;i<c.length;i++) if(!isNaN(c[i])) voiced.push(i);
+  const res={dur,voicedPct:c.length?voiced.length/c.length:0,score:null,tips:[],track:[],saHz};
+  for(const i of voiced) res.track.push([i*dt,c[i]]);
+  if(dur<3 || voiced.length*dt<2){ res.tips.push('We couldn’t hear enough singing. Hold the device closer and sing a little louder.'); return res; }
+  // segments of steady pitch
+  const segs=[]; let cur=null;
+  for(let i=0;i<c.length;i++){ const v=c[i]; if(!isNaN(v) && cur && Math.abs(v-c[i-1])<35){ cur.v.push(v); } else { if(cur && cur.v.length>=3) segs.push(cur); cur= isNaN(v)?null:{s:i,v:[v]}; } }
+  if(cur && cur.v.length>=3) segs.push(cur);
+  if(!segs.length){ res.tips.push('The notes were very short or unclear. Try sustaining each swara a little.'); return res; }
+  const notes=segs.map(g=>{ const s=[...g.v].sort((a,b)=>a-b); const m=s[Math.floor(s.length/2)]; const mean=g.v.reduce((a,b)=>a+b,0)/g.v.length; const sd=Math.sqrt(g.v.reduce((a,b)=>a+(b-mean)**2,0)/g.v.length); return {t:g.s*dt,dur:g.v.length*dt,m,sd}; });
+  // octave auto-detect: octave holding most Sa
+  const oct={}; for(const n of notes){ const cls=((n.m%1200)+1200)%1200; if(cls<60||cls>1140){ const o=Math.round(n.m/1200); oct[o]=(oct[o]||0)+n.dur; } }
+  let mid=0; const ok=Object.entries(oct).sort((a,b)=>b[1]-a[1]); if(ok.length){ mid=+ok[0][0]; if((oct[0]||0)>=0.25*ok[0][1]) mid=0; } else { const ms=notes.map(n=>n.m).sort((a,b)=>a-b); mid=Math.round((ms[Math.floor(ms.length/2)]-600)/1200); }
+  res.saHz=saHz*Math.pow(2,mid); res.octShift=mid;
+  let tot=0,inR=0,absDev=0,inDur=0,sdSum=0; const per={}, outN={}; let minC=1e9,maxC=-1e9;
+  for(const n of notes){ const m=n.m-mid*1200; const cls=((m%1200)+1200)%1200; const near=nearest(cls,allowed); tot+=n.dur; sdSum+=n.sd*n.dur; minC=Math.min(minC,m); maxC=Math.max(maxC,m);
+    if(Math.abs(near.dev)<=50){ inR+=n.dur; absDev+=Math.abs(near.dev)*n.dur; inDur+=n.dur; const p=per[near.n]||(per[near.n]={d:0,w:0}); p.d+=near.dev*n.dur; p.w+=n.dur; } else { const any=nearest(cls,Object.keys(SW)); if(Math.abs(any.dev)<=35) outN[any.n]=(outN[any.n]||0)+n.dur; } }
+  res.track=res.track.map(([t,v])=>[t,v-mid*1200]);
+  res.inRaga=inR/tot; res.meanDev=inDur?absDev/inDur:50; res.stab=sdSum/tot; res.minC=minC; res.maxC=maxC;
+  res.per=Object.fromEntries(Object.entries(per).map(([k,p])=>[k,{dev:Math.round(p.d/p.w),sec:+p.w.toFixed(1)}]));
+  res.saDev=per.S?per.S.d/per.S.w:null; res.paDev=per.P?per.P.d/per.P.w:null;
+  const sIn=clamp((res.inRaga-0.6)/0.35), sDev=clamp(1-(res.meanDev-8)/35), sSa=res.saDev==null?sDev:clamp(1-(Math.abs(res.saDev)-5)/40), sSt=clamp(1-(res.stab-8)/30);
+  const worst=Math.max(0,...Object.values(res.per).filter(p=>p.sec>=0.3).map(p=>Math.abs(p.dev)));
+  res.score=Math.round(clamp(100*(0.45*sIn+0.3*sDev+0.15*sSa+0.1*sSt) - Math.min(25,Math.max(0,worst-15)*0.6),0,100));
+  // tips
+  const tips=[];
+  if(res.saDev!=null && Math.abs(res.saDev)>18) tips.push(`Your Sa is a little ${res.saDev>0?'high':'low'} (${res.saDev>0?'+':''}${Math.round(res.saDev)}¢). Listen to the tanpura and match Sa before you start.`);
+  const off=Object.entries(res.per).filter(([k,p])=>k!=='S' && p.sec>=0.4 && Math.abs(p.dev)>=20).sort((a,b)=>Math.abs(b[1].dev)-Math.abs(a[1].dev));
+  for(const [k,p] of off.slice(0,2)) tips.push(`${SWN[k]} is a bit ${p.dev>0?'sharp':'flat'} (${p.dev>0?'+':''}${p.dev}¢). Sing it a touch ${p.dev>0?'lower':'higher'}.`);
+  const wrong=Object.entries(outN).filter(([k,d])=>d>=0.4).sort((a,b)=>b[1]-a[1]);
+  if(wrong.length) tips.push(`We heard ${wrong.slice(0,2).map(([k])=>SWN[k]+' ('+k+')').join(' and ')}, which ${wrong.length>1?'are':'is'} not in this rāga. Check the ārōhaṇa / avarōhaṇa.`);
+  else if(res.inRaga<0.75) tips.push('Some notes landed between swaras. Practise slowly with the tanpura and hold each swara steady.');
+  if(res.stab>22) tips.push('Long notes wobble a little. Take a good breath and keep the deergha swaras steady.');
+  if(opts.sec==='tara' && maxC<1150) tips.push('We didn’t hear the high Ṡa clearly. Reach up to the tāra sthāyi notes.');
+  if(opts.sec==='mandra' && minC>-200) tips.push('We didn’t hear the low (mandra) notes clearly. Go down to the mandra sthāyi.');
+  if(!tips.length) tips.push(res.score>=80?'Beautiful shruti. Keep it up!':'Nice and steady. Keep practising with the tanpura.');
+  if(opts.gamaka) tips.push('This rāga has many gamakas, so the score is only a rough guide.');
+  res.tips=tips.slice(0,4);
+  return res;
+}
+function scoreLabel(s){ if(s==null) return ['—','mute']; if(s>=80) return ['Beautiful shruti!','lv-ready']; if(s>=60) return ['Good. A few notes to polish','lv-shaky']; if(s>=40) return ['Getting there','lv-shaky']; return ['Let’s practise with the tanpura','lv-learning']; }
+function ringSvg(s){ const p=s==null?0:s/100, r=38, C=2*Math.PI*r, col=s==null?'#ccc':s>=80?'#2f7d4f':s>=60?'#e0a21b':s>=40?'#e08a1b':'#b3261e';
+  return `<svg class="score-ring" viewBox="0 0 92 92"><circle cx="46" cy="46" r="${r}" fill="none" stroke="#f0e7d8" stroke-width="9"/><circle cx="46" cy="46" r="${r}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 46 46)"/><text x="46" y="53" text-anchor="middle" font-family="Baloo 2" font-size="24" font-weight="700" fill="#2a1a14">${s==null?'–':s}</text></svg>`; }
+function drawGraph(cv,res,allowed){
+  const dpr=window.devicePixelRatio||1, W=cv.clientWidth, H=cv.clientHeight; cv.width=W*dpr; cv.height=H*dpr; const g=cv.getContext('2d'); g.scale(dpr,dpr); g.clearRect(0,0,W,H);
+  const tr=res.track; if(!tr.length) return;
+  const vs=tr.map(p=>p[1]).sort((a,b)=>a-b); let lo=Math.min(vs[Math.floor(vs.length*0.02)],-100)-80, hi=Math.max(vs[Math.floor(vs.length*0.98)],800)+80; lo=Math.max(lo,-1700); hi=Math.min(hi,2600);
+  const T=res.dur||tr[tr.length-1][0], L=46, x=t=>L+(W-L-8)*t/T, y=c=>H-10-(H-20)*(c-lo)/(hi-lo);
+  g.font='11px Noto Sans, sans-serif'; g.textBaseline='middle';
+  for(let o=-2;o<=2;o++) for(const n of allowed){ const c=SW[n]+o*1200; if(c<lo||c>hi) continue; const yy=y(c); g.strokeStyle=n==='S'?'rgba(122,30,44,.55)':n==='P'?'rgba(224,162,27,.6)':'rgba(0,0,0,.09)'; g.lineWidth=n==='S'?1.5:1; g.beginPath(); g.moveTo(L,yy); g.lineTo(W-4,yy); g.stroke(); g.fillStyle='#6f5d52'; g.fillText(SWN[n]+(o>0?'↑':o<0?'↓':''),4,yy); }
+  g.fillStyle='#7a1e2c'; for(const [t,c] of tr){ if(c<lo||c>hi) continue; g.fillRect(x(t)-1,y(c)-1.2,2.2,2.4); }
+}
+
+/* ====================== RECORDER + LIVE TUNER ====================== */
+const REC = {stream:null,mr:null,chunks:[],t0:0,raf:0,an:null,src:null};
+async function recStart(onTick){
+  const c=ctx(); try{ if(navigator.audioSession) navigator.audioSession.type='play-and-record'; }catch(e){}
+  REC.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+  const types=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg']; const mt=types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t));
+  REC.mr=new MediaRecorder(REC.stream, mt?{mimeType:mt}:undefined); REC.chunks=[]; REC.mr.ondataavailable=e=>{ if(e.data.size) REC.chunks.push(e.data); }; REC.mr.start(1000); REC.t0=now();
+  REC.src=c.createMediaStreamSource(REC.stream); REC.an=c.createAnalyser(); REC.an.fftSize=2048; REC.src.connect(REC.an);
+  const buf=new Float32Array(2048), d=new Float32Array(200), cm=new Float32Array(200); let last=0;
+  const loop=()=>{ REC.raf=requestAnimationFrame(loop); const t=performance.now(); if(t-last<90) return; last=t; REC.an.getFloatTimeDomainData(buf); const {y,fs}=decimate(buf,c.sampleRate); let s=0; for(const v of y) s+=v*v; const rms=Math.sqrt(s/y.length); let f=0; const maxT=Math.min(Math.floor(fs/100), y.length-260); if(rms>0.008) f=yin(y,0,y.length-maxT-1,Math.floor(fs/1300),maxT,fs,d,cm); onTick&&onTick((now()-REC.t0)/1000,f); };
+  loop();
+}
+function recStop(){ return new Promise(res=>{ cancelAnimationFrame(REC.raf); const mr=REC.mr; if(!mr){ return res(null); } mr.onstop=()=>{ const b=new Blob(REC.chunks,{type:mr.mimeType||'audio/webm'}); REC.stream.getTracks().forEach(t=>t.stop()); try{REC.src.disconnect();}catch(e){} REC.mr=null; try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){} res(b); }; mr.stop(); }); }
+function tunerHtml(){ return `<div class="tuner"><div class="sw" id="tSw">–</div><div class="needle"><i id="tNeedle"></i></div><div class="small mute" id="tCents" style="width:52px;text-align:right">&nbsp;</div></div>`; }
+function tunerUpdate(f,allowed){ const sw=$('#tSw'),nd=$('#tNeedle'),ce=$('#tCents'); if(!sw) return; if(!f){ sw.textContent='–'; ce.textContent=''; return; } const c=1200*Math.log2(f/(S.settings.sa||392)); const cls=((c%1200)+1200)%1200; const nr=nearest(cls,allowed||Object.keys(SW)); sw.textContent=SWN[nr.n]; nd.style.left=(50+clamp(nr.dev/50,-1,1)*48)+'%'; ce.textContent=(nr.dev>0?'+':'')+Math.round(nr.dev)+'¢'; sw.style.color=Math.abs(nr.dev)<15?'var(--green)':Math.abs(nr.dev)<30?'var(--amber)':'var(--red)'; }
+async function analyzeBlob(blob,it){
+  const c=ctx(); const ab=await blob.arrayBuffer(); const buf=await new Promise((res,rej)=>c.decodeAudioData(ab,res,rej));
+  return analyzeSamples(buf.getChannelData(0),buf.sampleRate,S.settings.sa||392,ragaOf(it).s,{yieldEvery:150,sec:it.sec,gamaka:['kambhoji','anandabhairavi','saveri','arabhi'].includes(it.r)});
+}
+/* Recording widget used in prep + mock. cb(attemptAudio:{blob,res}) */
+function recorderWidget(host,it,onDone,opts={}){
+  const allowed=ragaOf(it).s;
+  host.innerHTML=`<div class="row" style="gap:18px;align-items:center"><button class="rec-btn" id="rb">Record</button><div style="flex:1;min-width:200px"><div class="timer" id="rt">0:00</div>${tunerHtml()}<div class="small mute" id="rhint">${tanpura.on?'Tanpura is on. Use headphones for an accurate score.':'Tip: tap “Tanpura G” at the top to hear Sa.'}</div></div></div><div id="rres"></div>`;
+  const rb=$('#rb',host), rt=$('#rt',host);
+  rb.onclick=async()=>{
+    if(!REC.mr){
+      try{ await recStart((sec,f)=>{ rt.textContent=fmtTime(sec); tunerUpdate(f,allowed); }); }catch(e){ toast('Microphone not available: '+e.message,5000); return; }
+      rb.classList.add('on'); rb.textContent='Stop'; opts.onStart&&opts.onStart();
+    } else {
+      rb.classList.remove('on'); rb.textContent='…'; rb.disabled=true; const blob=await recStop();
+      $('#rres',host).innerHTML='<p class="mute">Listening to your singing…</p>';
+      let res; try{ res=await analyzeBlob(blob,it); }catch(e){ console.error(e); res={score:null,tips:['Could not analyse this recording ('+e.message+').'],track:[],dur:0}; }
+      showResult($('#rres',host),res,allowed,blob); rb.disabled=false; rb.textContent='Record again';
+      onDone&&onDone({blob,res});
+    }
+  };
+}
+function showResult(el,res,allowed,blob){
+  const [lab,cls]=scoreLabel(res.score);
+  el.innerHTML=`<div class="row" style="margin-top:14px;align-items:flex-start">${ringSvg(res.score)}<div style="flex:1;min-width:200px"><div><span class="pill ${cls}">${lab}</span></div><ul style="margin:8px 0 0;padding-left:18px">${res.tips.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>${res.inRaga!=null?`<div class="small mute" style="margin-top:6px">In rāga ${Math.round(res.inRaga*100)}% · avg ${Math.round(res.meanDev)}¢ off · Sa detected ${Math.round(res.saHz)} Hz</div>`:''}</div></div><canvas class="graph" style="margin-top:10px"></canvas>${blob?`<audio controls style="width:100%;margin-top:8px"></audio>`:''}`;
+  const cv=$('canvas',el); requestAnimationFrame(()=>drawGraph(cv,res,allowed));
+  if(blob) $('audio',el).src=URL.createObjectURL(blob);
+}
+const resSummary = r => r ? {score:r.score,inRaga:r.inRaga!=null?+r.inRaga.toFixed(3):null,meanDev:r.meanDev!=null?Math.round(r.meanDev):null,saDev:r.saDev!=null?Math.round(r.saDev):null,stab:r.stab!=null?Math.round(r.stab):null,saHz:Math.round(r.saHz||0),tips:r.tips,per:r.per} : null;
+async function saveAudio(attempt,blob){ attempt.audio={type:blob.type,drive:null,deleted:false}; await iput('audio',attempt.id,blob); put('attempts',attempt); await enforceRetention(); persist(); }
+
+/* ====================== SCORING ====================== */
+const SELF={got:0.85,shaky:0.55,not:0.2};
+function itemAttempts(id){ return Object.values(S.attempts).filter(a=>a.item===id&&!a.del).sort((a,b)=>b.ts-a.ts); }
+function itemScore(id){
+  const at=itemAttempts(id); if(!at.length) return {s:0,lv:'new',last:null};
+  const prep=at.find(a=>a.self); const mock=at.find(a=>a.mode==='mock' && (a.unprepared || a.pm!=null));
+  const sh=at.filter(a=>a.shruti?.score!=null).slice(0,3).map(a=>a.shruti.score/100); const shA=sh.length?sh.reduce((x,y)=>x+y,0)/sh.length:null;
+  const p=prep?SELF[prep.self]:null; let s;
+  if(mock){ const m=mock.unprepared?0:mock.pm/mock.max; s=0.6*m+0.25*(shA??m)+0.15*(p??m); }
+  else { s=Math.min(0.7, 0.7*(p??0.5)+0.3*(shA??p??0.5)); }
+  const lv = s<0.45?'learning':s<0.75?'shaky':'ready';
+  return {s,lv,last:at[0].ts,mocked:!!at.find(a=>a.mode==='mock')};
+}
+const LVN={new:'Not started',learning:'Learning',shaky:'Almost',ready:'Ready'};
+function factKeys(){ const k=[]; for(const id of Object.keys(COMPS)) for(const f of FACTS) k.push(id+':'+f); return k; }
+function factScore(key){ const r=Object.values(S.facts).filter(f=>f.key===key).sort((a,b)=>b.ts-a.ts).slice(0,2); if(!r.length) return null; return r.reduce((x,y)=>x+y.v,0)/r.length; }
+function guruScore(){ const r=Object.values(S.facts).filter(f=>f.key==='guru').sort((a,b)=>b.ts-a.ts)[0]; return r?r.v:0; }
+function metrics(){
+  const sc=Object.fromEntries(ITEMS.map(i=>[i.id,itemScore(i.id)]));
+  const fk=factKeys(); const fs=Object.fromEntries(fk.map(k=>[k,factScore(k)]));
+  const itemAvg=ITEMS.reduce((a,i)=>a+sc[i.id].s,0)/ITEMS.length; const factAvg=fk.reduce((a,k)=>a+(fs[k]??0),0)/fk.length;
+  const competency=Math.round(100*(0.85*itemAvg+0.15*factAvg));
+  let ready=0; const secR={};
+  for(const s of SECTIONS){ const its=ITEMS.filter(i=>i.sec===s.id).map(i=>sc[i.id].s); const best=Math.max(...its), mean=its.reduce((a,b)=>a+b,0)/its.length; secR[s.id]=s.mk*(s.sc*best+s.ec*mean); ready+=secR[s.id]; }
+  const fav=f=>{ const v=Object.keys(COMPS).map(id=>fs[id+':'+f]??0); return v.reduce((a,b)=>a+b,0)/v.length; };
+  const oral=0.5*fav('raga')+1*fav('tala')+0.5*fav('raga')+1*fav('aro')+0.5*fav('comp')+0.5*fav('bhasha')+1*guruScore();
+  const lastM=Object.values(S.mocks).filter(m=>m.ideals!=null).sort((a,b)=>b.ts-a.ts)[0];
+  const ideals=lastM?lastM.ideals:0;
+  const readiness=Math.round((ready+oral+ideals)*2)/2;
+  const mockedItems=ITEMS.filter(i=>itemAttempts(i.id).some(a=>a.mode==='mock')).length;
+  const oralMocked=fk.filter(k=>Object.values(S.facts).some(f=>f.key===k&&f.mode==='mock')).length;
+  const touchedItems=ITEMS.filter(i=>sc[i.id].lv!=='new').length; const touchedFacts=fk.filter(k=>fs[k]!=null).length;
+  const readyN=ITEMS.filter(i=>sc[i.id].lv==='ready').length;
+  return {sc,fs,competency,readiness,oral,ideals,secR,cov:{practical:Math.round(100*mockedItems/ITEMS.length),oral:Math.round(100*oralMocked/fk.length),full:Math.round(100*(mockedItems+oralMocked)/(ITEMS.length+fk.length)),touched:Math.round(100*(touchedItems+touchedFacts)/(ITEMS.length+fk.length)),mastered:Math.round(100*readyN/ITEMS.length)},readyN,touchedItems};
+}
+function focusList(M){
+  const t=now(); const cand=ITEMS.map(i=>{ const s=M.sc[i.id]; const days=s.last?(t-s.last)/86400000:30; return {id:i.id,sec:i.sec,need:(1-s.s)+Math.min(days,10)/10*0.6+(s.lv==='new'?0.5:0)+(i.req?0.1:0)}; }).sort((a,b)=>b.need-a.need);
+  const out=[],used=new Set(); for(const c of cand){ if(out.length>=4) break; if(used.has(c.sec)) continue; used.add(c.sec); out.push(c.id); }
+  return out;
+}
+function streak(){ const days=new Set([...Object.values(S.attempts),...Object.values(S.facts)].map(a=>dayKey(a.ts))); let n=0; let d=new Date(); if(!days.has(dayKey(d))) d.setDate(d.getDate()-1); while(days.has(dayKey(d))){ n++; d.setDate(d.getDate()-1); } return {n,today:days.has(dayKey(now()))}; }
+
+/* ====================== SESSIONS + REMINDERS ====================== */
+let curSession=null;
+function startSession(mode,mockType){ curSession=put('sessions',{id:uid(),mode,mockType:mockType||null,start:now(),end:now()}); }
+function touchSession(){ if(curSession){ curSession.end=now(); put('sessions',curSession); } }
+function rulesList(idx){ const g=S.settings.guru||'your Guru'; return (idx||RULES_FULL.map((_,i)=>i)).map(i=>RULES_FULL[i].replace('{GURU}',g)); }
+function reminder(kind){
+  return new Promise(res=>{
+    const full=kind==='mock'; const list=rulesList(full?null:RULES_SHORT);
+    const m=modal(`<h2>${full?'Exam rules: check each one':'Before you begin'}</h2><p class="mute small">From the Sangeeta Bhārati evaluation sheet.</p>
+      <div>${list.map((r,i)=>full?`<label class="check"><input type="checkbox" data-i="${i}"><span>${esc(r)}</span></label>`:`<div class="check" style="cursor:default"><span style="color:var(--maroon);font-weight:700">${i+1}.</span><span>${esc(r)}</span></div>`).join('')}</div>
+      ${full?`<div class="banner info" style="margin-top:12px">Set up like the real exam: quiet room, shruti on G, sit where the camera can see you, and start with namaskāra.</div>`:''}
+      <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn ghost" data-x>Cancel</button><button class="btn primary" id="rgo" ${full?'disabled':''}>${full?'I’m ready. Start the test':'Let’s practise'}</button></div>`);
+    const go=$('#rgo',m.el);
+    if(full) m.el.querySelectorAll('input[type=checkbox]').forEach(c=>c.onchange=()=>{ go.disabled=[...m.el.querySelectorAll('input[type=checkbox]')].some(x=>!x.checked); });
+    go.onclick=()=>{ m.close(); res(true); }; m.onClose=()=>res(false);
+  });
+}
+function modal(html){ const bg=document.createElement('div'); bg.className='modal-bg'; bg.innerHTML=`<div class="modal" role="dialog" aria-modal="true">${html}</div>`; $('#modalRoot').appendChild(bg); const m={el:bg,close:()=>{ bg.remove(); },onClose:null}; bg.addEventListener('click',e=>{ if(e.target===bg||e.target.closest('[data-x]')){ bg.remove(); m.onClose&&m.onClose(); } }); return m; }
+let prepReminded=false;
+async function ensurePrep(){ ensureTokenOnGesture(); if(prepReminded) return true; const ok=await reminder('prep'); if(ok){ prepReminded=true; startSession('prep'); } return ok; }
+
+/* ====================== TALA AID ====================== */
+function talaBeats(tl){ const out=[]; for(const g of TALAS[tl].g){ if(g[0]==='L'){ const n=+g.slice(1); out.push({a:'Clap',k:'laghu'}); for(let i=1;i<n;i++) out.push({a:'Finger '+i,k:'laghu'}); } else if(g==='D'){ out.push({a:'Clap',k:'drutam'},{a:'Wave',k:'drutam'}); } else if(g==='U'){ out.push({a:'Clap',k:'anudrutam'}); } } return out; }
+function openTala(tl){
+  tl=tl||'adi'; let bpm=+ls.get('sp_bpm')||60, timer=null, i=0, nextT=0;
+  const m=modal(`<div class="spread"><h2 style="margin:0">Tāḷa practice</h2><button class="btn ghost sm" data-x>Close</button></div>
+    <label class="f" for="tsel">Tāḷa</label><select id="tsel">${Object.entries(TALAS).map(([k,v])=>`<option value="${k}" ${k===tl?'selected':''}>${esc(v.n)}</option>`).join('')}</select>
+    <div id="tinfo" class="small mute" style="margin:8px 0"></div><div class="tala-row" id="trow"></div>
+    <label class="f" for="tbpm">Speed: <span id="tbv">${bpm}</span> beats/min</label><input type="range" id="tbpm" min="30" max="120" value="${bpm}" style="width:100%">
+    <p class="small mute">1st speed: 1 swara per beat · 2nd: 2 per beat · 3rd: 4 per beat</p>
+    <div class="row"><button class="btn primary" id="tgo">Start</button></div>`);
+  const draw=()=>{ const b=talaBeats(tl); $('#trow',m.el).innerHTML=b.map((x,j)=>`<div class="beat" data-j="${j}">${j+1}<small>${x.a}</small></div>`).join(''); const T=TALAS[tl]; $('#tinfo',m.el).textContent=`${T.g.map(g=>g[0]==='L'?'Laghu ('+g.slice(1)+')':g==='D'?'Drutam (2)':'Anudrutam (1)').join(' + ')} = ${b.length} beats${T.note?' · '+T.note:''}`; };
+  const stop=()=>{ clearInterval(timer); timer=null; $('#tgo',m.el).textContent='Start'; m.el.querySelectorAll('.beat').forEach(x=>x.classList.remove('now')); };
+  $('#tsel',m.el).onchange=e=>{ tl=e.target.value; stop(); draw(); };
+  $('#tbpm',m.el).oninput=e=>{ bpm=+e.target.value; $('#tbv',m.el).textContent=bpm; ls.set('sp_bpm',bpm); };
+  $('#tgo',m.el).onclick=()=>{ if(timer) return stop(); const c=ctx(); i=0; nextT=c.currentTime+0.1; $('#tgo',m.el).textContent='Stop';
+    timer=setInterval(()=>{ const b=talaBeats(tl); while(nextT<c.currentTime+0.2){ const j=i%b.length; click(c,nextT,b[j].a==='Clap'); const delay=(nextT-c.currentTime)*1000; setTimeout(()=>{ m.el.querySelectorAll('.beat').forEach(x=>x.classList.toggle('now',+x.dataset.j===j)); },Math.max(0,delay)); nextT+=60/bpm; i++; } },50); };
+  const oc=m.close; m.close=()=>{ stop(); oc(); }; m.onClose=stop; draw();
+}
+
+/* ====================== VIEWS ====================== */
+let curView='home', mockRunning=false;
+const view=$('#view');
+function route(){
+  const h=(location.hash||'#home').slice(1); const [v,arg]=h.split(/-(.+)/); curView=v;
+  document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on', a.dataset.t===({item:'practice',flash:'practice',settings:'parent',rate:'parent',links:'parent',mockrun:'mock'}[v]||v)));
+  const fn={home:vHome,practice:vPractice,item:vItem,flash:vFlash,mock:vMock,progress:vProgress,parent:vParent,settings:vSettings,rate:vRate,links:vLinks}[v]||vHome;
+  if(v==='mockrun' && !mockRunning){ location.hash='#mock'; return; }
+  if(v!=='mockrun'){ fn(arg); window.scrollTo(0,0); }
+}
+function rerenderSoft(){ if(['home','progress','parent','practice'].includes(curView)) route(); }
+addEventListener('hashchange',route);
+
+function vHome(){
+  const M=metrics(), st=streak(), dl=daysTo(EXAM_DATE), fl=focusList(M); const untouched=ITEMS.length-M.touchedItems; const paceDays=Math.max(1,daysTo('2026-12-21'));
+  const pending=Object.values(S.mocks).filter(m=>m.needsRating).length;
+  view.innerHTML=`
+  <div class="card" style="background:linear-gradient(135deg,#7a1e2c,#9b2c3c);color:#fff;border:0">
+    <div class="spread"><div><h1 style="color:#fff;margin:0">Namaste!</h1><div style="opacity:.9">${dl>0?`<b>${dl} days</b> to your Pravēsha Prathama exam (Dec 28)`:dl===0?'<b>Exam day!</b> You are ready. Sing with joy.':'Exam done. Keep practising for the next level!'}</div></div>
+    <div style="text-align:right"><div style="font-family:'Baloo 2';font-size:40px;line-height:1;color:var(--gold)">${st.n}</div><div class="small" style="opacity:.9">day streak${st.today?' · done today ✓':''}</div></div></div>
+    <div class="row" style="margin-top:14px"><a class="btn gold big" href="#practice" id="hPrep">Start practice</a><a class="btn big" style="background:transparent;color:#fff;border-color:#fff" href="#mock">Take a mock test</a></div>
+  </div>
+  ${(!S.settings.guru||!clientId())?`<div class="banner info"><b>Parent setup:</b> ${!clientId()?'connect Google Drive so progress is saved safely':''}${!clientId()&&!S.settings.guru?' and ':''}${!S.settings.guru?'add the Guru’s name':''}. <a href="#settings">Open Settings</a></div>`:''}
+  ${pending?`<div class="banner warn"><b>${pending} mock test${pending>1?'s':''}</b> waiting for a parent to rate. <a href="#parent">Open Parent</a></div>`:''}
+  <div class="grid2">
+    <div class="card"><h2>Today’s focus</h2><div style="display:flex;flex-direction:column;gap:8px">${fl.map(id=>{ const s=M.sc[id]; return `<a class="item-chip ${s.lv}" href="#item-${id}" style="text-decoration:none;color:inherit"><b>${esc(itemTitle(id))}</b><span class="small mute">${esc(SEC[ITEM[id].sec].n)} · <span class="pill lv-${s.lv}">${LVN[s.lv]}</span></span></a>`; }).join('')}
+      <a class="item-chip" href="#flash" style="text-decoration:none;color:inherit"><b>Oral flashcards (5 min)</b><span class="small mute">Rāga, tāḷa, composer, language</span></a></div>
+      ${untouched?`<p class="small mute" style="margin:10px 0 0">${untouched} items not started yet. Try about <b>${Math.ceil(untouched/paceDays)} new item${Math.ceil(untouched/paceDays)>1?'s':''} a day</b> to cover everything by Dec 21, leaving the last week for full mock tests.</p>`:''}</div>
+    <div class="card"><h2>Your garden</h2><p class="small mute" style="margin-top:-4px">Each lotus blooms as a section gets ready.</p>
+      ${SECTIONS.map(s=>{ const its=ITEMS.filter(i=>i.sec===s.id); const r=its.filter(i=>M.sc[i.id].lv==='ready').length, sh=its.filter(i=>M.sc[i.id].lv==='shaky').length; const p=(r+sh*0.5)/its.length; return `<div class="row" style="gap:8px;margin:6px 0">${lotus(p)}<div style="flex:1"><div class="spread small"><b>${esc(s.n)}</b><span class="mute">${r}/${its.length} ready</span></div>${levelBar(its.map(i=>M.sc[i.id].lv))}</div></div>`; }).join('')}
+    </div>
+  </div>
+  <div class="grid2" style="margin-top:14px">
+    <div class="card"><div class="mute small">Full syllabus competency</div><div class="big-n">${M.competency}%</div><div class="small mute">All 61 items + oral facts</div></div>
+    <div class="card"><div class="mute small">Exam readiness (expected)</div><div class="big-n">${M.readiness}<span style="font-size:22px">/50</span></div><div class="small mute">Assumes the examiner can pick any item</div></div>
+  </div>`;
+  $('#hPrep').onclick=e=>{ e.preventDefault(); ensurePrep().then(ok=>{ if(ok) location.hash='#practice'; }); };
+}
+function lotus(p){ const n=Math.round(p*5); const pet=(a,on)=>`<ellipse cx="12" cy="7" rx="3.2" ry="6" transform="rotate(${a} 12 14)" fill="${on?'#e86a8a':'#eadfcd'}" stroke="${on?'#b83d5e':'#d9ccb6'}" stroke-width=".6"/>`; return `<svg class="lotus" viewBox="0 0 24 24" aria-label="${Math.round(p*100)}% bloomed">${[-60,-30,0,30,60].map((a,i)=>pet(a,i<n)).join('')}<rect x="5" y="18" width="14" height="2.4" rx="1.2" fill="#2f7d4f"/></svg>`; }
+function levelBar(lvs){ const c={ready:'#2f7d4f',shaky:'#e0a21b',learning:'#e07b6f',new:'#efe9e0'}; const n=lvs.length; const cnt=k=>lvs.filter(x=>x===k).length; return `<div class="bar">${['ready','shaky','learning'].map(k=>`<span style="width:${100*cnt(k)/n}%;background:${c[k]}"></span>`).join('')}</div>`; }
+
+function vPractice(){
+  const M=metrics();
+  view.innerHTML=`<div class="spread"><h1>Practice</h1><div class="row"><a class="btn sm" href="#flash">Oral flashcards</a><button class="btn sm" id="talaBtn">Tāḷa practice</button></div></div>
+  <p class="mute" style="margin-top:-4px">Tap any item to see its details and recordings, sing with the tanpura, and check your shruti.</p>
+  ${SECTIONS.map(s=>{ const its=ITEMS.filter(i=>i.sec===s.id); return `<div class="card"><div class="spread"><h3 style="margin:0">${esc(s.n)}</h3><span class="small mute">Exam: ${s.req} required · textbook has ${s.cnt} · ${s.sp===3?'3 speeds':'any 1 speed'}</span></div>${levelBar(its.map(i=>M.sc[i.id].lv))}<div class="items" style="margin-top:10px">${its.map(i=>{ const sc=M.sc[i.id]; return `<a class="item-chip ${sc.lv}" href="#item-${i.id}" style="text-decoration:none;color:inherit"><b>${esc(s.id==='alank'?'Alankāra '+i.i:itemTitle(i.id))}</b><span class="small"><span class="pill lv-${sc.lv}">${LVN[sc.lv]}</span>${i.req?'':' <span class="mute">extra</span>'}</span></a>`; }).join('')}</div></div>`; }).join('')}`;
+  $('#talaBtn').onclick=()=>openTala('adi');
+  if(!prepReminded) ensurePrep();
+}
+function videoLinks(id){ const it=ITEM[id]; const v=(it.v||[]).map(x=>({url:'https://www.youtube.com/watch?v='+x,label:'Sangeeta Bhārati video'})); const extra=Object.values(S.links).filter(l=>l.item===id&&!l.del).map(l=>({url:l.url,label:l.label||'Extra link'})); return [...v,...extra]; }
+function vItem(id){
+  const it=itemInfo(id); if(!it.id){ location.hash='#practice'; return; } const R=ragaOf(it), T=talaOf(it), sec=SEC[it.sec]; const M=itemScore(id); const links=videoLinks(id); const at=itemAttempts(id);
+  view.innerHTML=`<a href="#practice" class="small">← Practice</a>
+  <div class="card" style="margin-top:8px"><div class="spread"><div><div class="small mute">${esc(sec.n)}${it.req?'':' · extra (beyond the minimum)'}</div><h1 style="margin:2px 0 6px">${esc(it.t)}</h1></div><span class="pill lv-${M.lv}">${LVN[M.lv]}</span></div>
+   <dl class="meta"><dt>Rāga</dt><dd>${esc(R.n)} <span class="mute" style="font-weight:400">(${esc(R.m)})</span></dd><dt>Ārōhaṇa</dt><dd>${esc(R.a)}</dd><dt>Avarōhaṇa</dt><dd>${esc(R.v)}</dd><dt>Tāḷa</dt><dd>${esc(T.n)}</dd>${it.comp?`<dt>Vāggēyakāra</dt><dd>${esc(it.c)}</dd><dt>Bhāṣhā</dt><dd>${esc(it.b)}</dd>`:''}<dt>Textbook</dt><dd>Page ${it.p}</dd><dt>Exam</dt><dd>${sec.sp===3?'Sing in 3 speeds':'Any one speed'}${it.sec==='bhajan'?' · sāhitya only':it.sec==='sarale'||sec.sp===3?'':' · swara + sāhitya'}</dd></dl></div>
+  <div class="card"><h3>Recordings</h3>${links.length?`<div class="row">${links.map(l=>`<a class="btn sm" href="${l.url.startsWith('https://')?esc(l.url):'#'}" target="_blank" rel="noopener">▶ ${esc(l.label)}</a>`).join('')}</div>${['sarale','mandra','datu'].includes(it.sec)?'<p class="small mute" style="margin:8px 0 0">One video covers the whole section. Skip to this exercise.</p>':''}`:`<p class="mute" style="margin:0">No recording yet. A parent can add one in Parent › Recording links.</p>`}</div>
+  <div class="card"><div class="spread"><h3 style="margin:0">Sing and check your shruti</h3><div class="row"><button class="btn sm" id="iTala">Tāḷa: ${esc(T.n.split(' (')[0])}</button></div></div><p class="small mute">Turn on the tanpura (top bar). Use headphones if you can, then tap Record and sing.</p><div id="recHost"></div></div>
+  <div class="card"><h3>How did it go?</h3><div class="row"><button class="btn" data-self="got">Got it</button><button class="btn" data-self="shaky">Shaky</button><button class="btn" data-self="not">Not yet</button></div>
+   <p class="small mute" style="margin:8px 0 0">“Ready” comes after a parent-rated mock test. Practice can take you up to “Almost”.</p></div>
+  ${at.length?`<div class="card"><h3>History</h3><table><thead><tr><th>When</th><th>Mode</th><th class="n">Shruti</th><th>Result</th></tr></thead><tbody>${at.slice(0,10).map(a=>`<tr><td>${new Date(a.ts).toLocaleDateString()}</td><td>${a.mode}</td><td class="n">${a.shruti?.score??'–'}</td><td>${a.self?esc({got:'Got it',shaky:'Shaky',not:'Not yet'}[a.self]):a.unprepared?'Not prepared':a.pm!=null?`${a.pm}/${a.max}`:a.mode==='mock'?'awaiting rating':''}</td></tr>`).join('')}</tbody></table></div>`:''}`;
+  let last=null;
+  recorderWidget($('#recHost'),it,({blob,res})=>{ last={blob,res}; touchSession(); },{onStart:()=>ensurePrep()});
+  $('#iTala').onclick=()=>openTala(it.tl);
+  view.querySelectorAll('[data-self]').forEach(b=>b.onclick=async()=>{ await ensurePrep(); const a={id:uid(),item:id,ts:now(),mode:'prep',self:b.dataset.self,shruti:last?resSummary(last.res):null,session:curSession?.id};
+    if(last?.blob) await saveAudio(a,last.blob); else put('attempts',a); touchSession(); last=null; toast(PRAISE[Math.floor(Math.random()*PRAISE.length)]); vItem(id); });
+}
+
+/* ---- flashcards ---- */
+function vFlash(){
+  ensurePrep();
+  const keys=factKeys(); const t=now();
+  const deck=keys.map(k=>({k,s:factScore(k)??-1})).sort((a,b)=>(a.s-b.s)||Math.random()-0.5).slice(0,12).sort(()=>Math.random()-0.5);
+  deck.push({k:'guru',s:0}); let i=0,score=0;
+  const show=()=>{
+    if(i>=deck.length){ view.innerHTML=`<a href="#practice" class="small">← Practice</a><div class="card flash"><h2>Done!</h2><div class="big-n">${score}/${deck.length}</div><p>${PRAISE[Math.floor(Math.random()*PRAISE.length)]}</p><div class="row"><button class="btn primary" id="again">Another round</button><a class="btn" href="#home">Home</a></div></div>`; $('#again').onclick=vFlash; touchSession(); return; }
+    const {q,a}=factQA(deck[i].k);
+    view.innerHTML=`<a href="#practice" class="small">← Practice</a><div class="spread" style="margin:6px 0"><h1 style="margin:0">Oral flashcards</h1><span class="mute">${i+1} / ${deck.length}</span></div>
+    <div class="card flash"><div class="q">${esc(q)}</div><div class="a hide" id="fa">${esc(a)}</div><button class="btn primary" id="fshow">Show answer</button>
+    <div class="row hide" id="fmark"><button class="btn" data-v="1">I knew it</button><button class="btn" data-v="0.5">Partly</button><button class="btn" data-v="0">Not yet</button></div></div><p class="small mute">Say your answer out loud first, like in the exam.</p>`;
+    $('#fshow').onclick=()=>{ $('#fa').classList.remove('hide'); $('#fshow').classList.add('hide'); $('#fmark').classList.remove('hide'); };
+    view.querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{ const v=+b.dataset.v; score+=v; put('facts',{id:uid(),key:deck[i].k,v,ts:now(),mode:'prep'}); i++; show(); });
+  };
+  show();
+}
+function factQA(key){
+  if(key==='guru') return {q:'Who is your Guru? Say the name respectfully.',a:S.settings.guru||'(ask a parent to add it in Settings)'};
+  const [id,f]=key.split(':'); const it=itemInfo(id); const R=ragaOf(it);
+  return {raga:{q:`Which rāga is “${it.t}” in?`,a:`${R.n} (${R.m})`},aro:{q:`Ārōhaṇa and avarōhaṇa of the rāga of “${it.t}”?`,a:`${R.n}: ${R.a}  |  ${R.v}`},tala:{q:`What is the tāḷa of “${it.t}”? Show it with your hands.`,a:talaOf(it).n},comp:{q:`Who composed “${it.t}”?`,a:it.c==='Unknown'?'Composer unknown (anonymous)':it.c},bhasha:{q:`What language (bhāṣhā) is “${it.t}” in?`,a:it.b}}[f];
+}
+
+/* ---- mock tests ---- */
+function vMock(){
+  const hist=Object.values(S.mocks).sort((a,b)=>b.ts-a.ts).slice(0,8);
+  view.innerHTML=`<h1>Mock test</h1><p class="mute" style="margin-top:-4px">Test mode: notation and recordings are hidden, like the real exam. Every practical item is recorded so a parent can rate it.</p>
+  <div class="grid2">
+   ${[['oral','Oral only','6 examiner questions + conduct','~10 min',7],['practical','Practical only','All 10 sections, your choice + examiner’s choice','~35 min',43],['full','Oral + Practical','The full 45-minute exam','45 min',50]].map(([k,t,d,tm,mx])=>`<div class="card"><h2>${t}</h2><p class="mute" style="margin:0 0 10px">${d}<br>${tm} · ${mx} marks</p><button class="btn primary" data-mt="${k}">Start</button></div>`).join('')}
+  </div>
+  ${hist.length?`<div class="card" style="margin-top:14px"><h3>Recent mock tests</h3><table><thead><tr><th>Date</th><th>Type</th><th class="n">Oral</th><th class="n">Practical</th><th class="n">Total</th></tr></thead><tbody>${hist.map(m=>`<tr><td>${new Date(m.ts).toLocaleDateString()}</td><td>${m.type}</td><td class="n">${m.oral??'–'}</td><td class="n">${m.needsRating?'<span class="pill lv-shaky">to rate</span>':m.prac??'–'}</td><td class="n"><b>${m.total??'–'}</b>/${m.max}</td></tr>`).join('')}</tbody></table></div>`:''}`;
+  view.querySelectorAll('[data-mt]').forEach(b=>b.onclick=async()=>{ ensureTokenOnGesture(); if(await reminder('mock')) runMock(b.dataset.mt); });
+}
+function pickWeighted(arr,w,k){ const out=[]; const pool=arr.map((x,i)=>({x,w:w[i]})); while(out.length<k&&pool.length){ const tot=pool.reduce((a,b)=>a+b.w,0); let r=Math.random()*tot; let j=0; for(;j<pool.length-1;j++){ r-=pool[j].w; if(r<=0) break; } out.push(pool[j].x); pool.splice(j,1); } return out; }
+function buildMock(type){
+  const M=metrics(); const steps=[]; const t=now();
+  if(type!=='oral') for(const s of SECTIONS){
+    const its=ITEMS.filter(i=>i.sec===s.id).map(i=>i.id);
+    const w=its.map(id=>{ const sc=M.sc[id]; const lm=itemAttempts(id).find(a=>a.mode==='mock'); const days=lm?(t-lm.ts)/86400000:20; return 1+2*(1-sc.s)+Math.min(days,14)/7+(lm?0:2); });
+    const ec=pickWeighted(its,w,s.ec);
+    for(let k=0;k<s.sc;k++) steps.push({kind:'prac',sec:s.id,sc:true,exclude:ec});
+    for(const id of ec) steps.push({kind:'prac',sec:s.id,sc:false,item:id});
+  }
+  if(type!=='practical'){
+    const comps=Object.keys(COMPS); const wf=f=>comps.map(id=>1+2*(1-(M.fs[id+':'+f]??0)));
+    const byR={}; for(const id of comps){ const r=itemInfo(id).r; (byR[r]=byR[r]||[]).push(id); }
+    const q1=pickWeighted(comps,wf('raga'),1)[0];
+    steps.push({kind:'oral',q:'name',item:q1,max:0.5});
+    steps.push({kind:'oral',q:'tala',item:pickWeighted(comps,wf('tala'),1)[0],max:1});
+    steps.push({kind:'oral',q:'raga',item:pickWeighted(comps,wf('aro'),1)[0],max:1.5});
+    const known=comps.filter(id=>itemInfo(id).c!=='Unknown'); steps.push({kind:'oral',q:'comp',item:pickWeighted(known,known.map(id=>1+2*(1-(M.fs[id+':comp']??0))),1)[0],max:0.5});
+    steps.push({kind:'oral',q:'bhasha',item:pickWeighted(comps,wf('bhasha'),1)[0],max:0.5});
+    steps.push({kind:'oral',q:'guru',max:1});
+    steps.push({kind:'ideals',max:2});
+  }
+  return steps;
+}
+function runMock(type){
+  curView='mockrun'; mockRunning=true; location.hash='#mockrun';
+  startSession('mock',type);
+  const mock={id:uid(),ts:now(),type,max:type==='oral'?7:type==='practical'?43:50,attempts:[],oral:null,prac:null,ideals:null,total:null,needsRating:type!=='oral',session:curSession.id};
+  const steps=buildMock(type); const limit={oral:10,practical:35,full:45}[type]*60; const t0=now(); let i=0, oralSum=0; let tmr=null;
+  const tick=()=>{ const el=$('#mclock'); if(!el) return; const left=limit-(now()-t0)/1000; el.textContent=fmtTime(left); el.style.color=left<0?'var(--red)':left<300?'var(--amber)':''; };
+  tmr=setInterval(tick,1000);
+  const head=()=>`<div class="spread"><div><div class="small mute">Mock test · ${({oral:'Oral only',practical:'Practical only',full:'Oral + Practical'})[type]}</div><h2 style="margin:0">Question ${i+1} of ${steps.length}</h2></div><div style="text-align:right"><div class="timer" id="mclock"></div><button class="btn ghost sm" id="mquit">End test</button></div></div><div class="bar" style="margin:8px 0 14px"><span style="width:${100*i/steps.length}%;background:var(--maroon)"></span></div>`;
+  const next=()=>{ i++; touchSession(); render(); };
+  const finish=()=>{ clearInterval(tmr); mock.oral = type==='practical'?null:Math.round(oralSum*2)/2; mockRunning=false; if(!mock.needsRating) mock.total=(mock.oral||0)+(mock.ideals||0); put('mocks',mock); touchSession(); curSession=null; prepReminded=false;
+    view.innerHTML=`<div class="card flash"><h1>Well done!</h1><p>${PRAISE[Math.floor(Math.random()*PRAISE.length)]}</p>${type!=='practical'?`<div><div class="mute small">Oral + conduct (self-marked)</div><div class="big-n">${(mock.oral||0)+(mock.ideals||0)}/7</div></div>`:''}${mock.needsRating?`<div class="banner warn">The practical part is saved. Ask a parent to rate it in <b>Parent › Rate mock tests</b>.</div>`:''}<div class="row"><a class="btn primary" href="#home">Home</a><a class="btn" href="#progress">See progress</a></div></div>`; };
+  const render=()=>{
+    if(i>=steps.length) return finish();
+    const st=steps[i]; view.innerHTML=head()+'<div id="mbody"></div>'; tick(); $('#mquit').onclick=()=>{ const m=modal(`<h2>End the test now?</h2><p>Answers so far are saved.</p><div class="row" style="justify-content:flex-end"><button class="btn ghost" data-x>Keep going</button><button class="btn primary" id="qy">End test</button></div>`); $('#qy',m.el).onclick=()=>{ m.close(); if(REC.mr) recStop(); finish(); }; };
+    const body=$('#mbody');
+    if(st.kind==='prac'){
+      const s=SEC[st.sec]; const its=ITEMS.filter(x=>x.sec===st.sec&&!(st.exclude||[]).includes(x.id));
+      body.innerHTML=`<div class="card"><div class="small mute">${esc(s.n)} · ${st.sc?'<b>Your choice</b>':'<b>Examiner’s choice</b>'} · ${s.mk} mark${s.mk>1?'s':''}</div>
+        ${st.sc?`<label class="f" for="scSel">Which one will you sing?</label><select id="scSel">${its.map(x=>`<option value="${x.id}">${esc(itemTitle(x.id))}</option>`).join('')}</select>`:`<h1 style="margin:6px 0">${esc(itemTitle(st.item))}</h1>`}
+        <p style="margin:10px 0 0"><b>${s.sp===3?'Sing in all 3 speeds, 1st → 2nd → 3rd kāla.':'Sing from start to finish in one speed.'}</b> ${st.sec==='bhajan'?'Sāhitya only.':s.sp===3?'':'Swara first, then sāhitya.'} Keep tāḷa with your hands.</p></div>
+        <div class="card"><div id="mrec"></div></div>
+        <div class="row" style="justify-content:space-between"><button class="btn ghost" id="unp">I didn’t prepare this one</button><button class="btn primary" id="mnext" disabled>Next</button></div>`;
+      let got=null; const itemId=()=>st.sc?$('#scSel').value:st.item;
+      const mount=()=>recorderWidget($('#mrec'),itemInfo(itemId()),r=>{ got=r; $('#mnext').disabled=false; });
+      mount(); if(st.sc) $('#scSel').onchange=mount;
+      $('#unp').onclick=()=>{ if(REC.mr) recStop(); const a={id:uid(),item:itemId(),ts:now(),mode:'mock',mock:mock.id,max:s.mk,unprepared:true,session:curSession?.id}; put('attempts',a); mock.attempts.push(a.id); next(); };
+      $('#mnext').onclick=async()=>{ const a={id:uid(),item:itemId(),ts:now(),mode:'mock',mock:mock.id,max:s.mk,pm:null,sc:st.sc,shruti:resSummary(got.res),session:curSession?.id}; mock.attempts.push(a.id); await saveAudio(a,got.blob); next(); };
+    } else if(st.kind==='oral'){
+      let parts, q, ans; const it=st.item?itemInfo(st.item):null; const R=it?ragaOf(it):null;
+      if(st.q==='name'){ q=`Name a composition you have learned in rāga ${R.n}.`; const list=Object.keys(COMPS).filter(id=>itemInfo(id).r===it.r).map(id=>itemInfo(id).t); ans=list.join(' · '); parts=[['Named one correctly',0.5,it.id+':raga']]; }
+      if(st.q==='tala'){ q=`What is the tāḷa of “${it.t}”? Name it and show it with your hands.`; ans=talaOf(it).n; parts=[['Named the tāḷa',0.5,it.id+':tala'],['Showed it with hands correctly',0.5,null]]; }
+      if(st.q==='raga'){ q=`Which rāga is “${it.t}” in? Give its ārōhaṇa and avarōhaṇa.`; ans=`${R.n}\nĀrōhaṇa: ${R.a}\nAvarōhaṇa: ${R.v}`; parts=[['Rāga name',0.5,it.id+':raga'],['Ārōhaṇa',0.5,it.id+':aro'],['Avarōhaṇa',0.5,it.id+':aro']]; }
+      if(st.q==='comp'){ q=`Who is the vāggēyakāra (composer) of “${it.t}”?`; ans=it.c; parts=[['Correct',0.5,it.id+':comp']]; }
+      if(st.q==='bhasha'){ q=`What is the bhāṣhā (language) of “${it.t}”?`; ans=it.b; parts=[['Correct',0.5,it.id+':bhasha']]; }
+      if(st.q==='guru'){ q='Please tell us your Guru’s full name.'; ans=S.settings.guru||'(a parent can add the name in Parent › Settings)'; parts=[['Full name',0.5,'guru'],['Said respectfully with an honorific (Smt./Shri)',0.5,'guru']]; }
+      body.innerHTML=`<div class="card flash"><div class="small mute">Oral · ${st.max} mark${st.max>1?'s':''}</div><div class="q">${esc(q)}</div><p class="small mute">Answer out loud, then tap Show answer.</p>${st.q==='tala'?`<button class="btn sm" id="otala">Open tāḷa helper after answering</button>`:''}<div class="a hide" id="oa" style="white-space:pre-line">${esc(ans)}</div><button class="btn primary" id="oshow">Show answer</button></div>
+        <div class="card hide" id="omark"><h3>Mark each part</h3>${parts.map((p,j)=>`<label class="check"><input type="checkbox" data-j="${j}"><span>${esc(p[0])} <span class="mute">(${p[1]})</span></span></label>`).join('')}<div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn primary" id="onext">Next</button></div></div>`;
+      if($('#otala')) $('#otala').onclick=()=>openTala(it.tl);
+      $('#oshow').onclick=()=>{ $('#oa').classList.remove('hide'); $('#oshow').classList.add('hide'); $('#omark').classList.remove('hide'); };
+      $('#onext').onclick=()=>{ const fv={}; parts.forEach((p,j)=>{ const ok=$(`[data-j="${j}"]`).checked; if(ok) oralSum+=p[1]; if(p[2]){ (fv[p[2]]=fv[p[2]]||[]).push(ok?1:0); } });
+        for(const [k,v] of Object.entries(fv)) put('facts',{id:uid(),key:k,v:v.reduce((a,b)=>a+b,0)/v.length,ts:now(),mode:'mock',mock:mock.id}); next(); };
+    } else if(st.kind==='ideals'){
+      const list=['Neat and well presented','Instrument / shruti box handled with care','Namaskāra at the start','Polite and respectful throughout','Followed every instruction'];
+      body.innerHTML=`<div class="card"><h2>Ideals of an Indian Fine Arts Student (2 marks)</h2><p class="mute">Tick what was true today. Now do namaskāra to finish!</p>${list.map((l,j)=>`<label class="check"><input type="checkbox" data-k="${j}"><span>${l}</span></label>`).join('')}<div class="row" style="justify-content:flex-end;margin-top:10px"><button class="btn primary" id="inext">Finish</button></div></div>`;
+      $('#inext').onclick=()=>{ const n=[...view.querySelectorAll('[data-k]')].filter(x=>x.checked).length; mock.ideals=Math.round(2*n/5*2)/2; next(); };
+    }
+  };
+  render();
+}
+
+/* ---- progress ---- */
+function vProgress(){
+  const M=metrics(); const mocks=Object.values(S.mocks).filter(m=>m.total!=null).sort((a,b)=>a.ts-b.ts);
+  const notStarted=ITEMS.filter(i=>M.sc[i.id].lv==='new');
+  view.innerHTML=`<h1>Progress</h1>
+  <div class="grid2">
+   <div class="card"><div class="mute small">Full syllabus competency</div><div class="big-n">${M.competency}%</div><div class="bar" style="margin:8px 0"><span style="width:${M.competency}%;background:var(--maroon)"></span></div><p class="small mute" style="margin:0">All 61 textbook items (85%) + oral facts (15%). Goal: mastery of everything, not just the minimum.</p></div>
+   <div class="card"><div class="mute small">Exam readiness</div><div class="big-n">${M.readiness}<span style="font-size:22px">/50</span></div><p class="small mute" style="margin:6px 0 0">Expected score if the exam were today. Your choice uses your best item. The examiner’s choice could be any item, so weak items pull it down. Oral ${Math.round(M.oral*2)/2}/5 · conduct ${M.ideals}/2.</p></div>
+  </div>
+  <div class="card" style="margin-top:14px"><h3>Preparation coverage</h3><div class="grid2" style="gap:10px">
+   ${[['Tested in practical mocks',M.cov.practical],['Tested in oral mocks',M.cov.oral],['Tested in any mock',M.cov.full],['Touched in prep or mock',M.cov.touched],['Mastered (Ready)',M.cov.mastered]].map(([l,v])=>`<div><div class="spread small"><b>${l}</b><span>${v}%</span></div><div class="bar"><span style="width:${v}%;background:var(--gold)"></span></div></div>`).join('')}
+  </div></div>
+  <div class="card"><h3>By section</h3><table class="stack"><thead><tr><th>Section</th><th>Levels</th><th class="n">Ready</th><th class="n">Expected exam marks</th></tr></thead><tbody>${SECTIONS.map(s=>{ const its=ITEMS.filter(i=>i.sec===s.id); return `<tr><td><b>${esc(s.n)}</b></td><td style="width:40%">${levelBar(its.map(i=>M.sc[i.id].lv))}</td><td class="n">${its.filter(i=>M.sc[i.id].lv==='ready').length}/${its.length}</td><td class="n">${(Math.round(M.secR[s.id]*2)/2)} / ${s.mk*(s.sc+s.ec)}</td></tr>`; }).join('')}</tbody></table>
+   <p class="small mute"><span class="pill lv-ready">Ready</span> <span class="pill lv-shaky">Almost</span> <span class="pill lv-learning">Learning</span> <span class="pill lv-new">Not started</span></p></div>
+  <div class="card"><h3>Mock test scores</h3>${mocks.length?`<div class="fig" style="position:relative;height:160px"><svg id="mchart" style="position:absolute;inset:0;width:100%;height:100%"></svg></div>`:'<p class="mute">No rated mock tests yet.</p>'}</div>
+  ${notStarted.length?`<div class="card"><h3>Not started yet (${notStarted.length})</h3><div class="items">${notStarted.map(i=>`<a class="item-chip" href="#item-${i.id}" style="text-decoration:none;color:inherit"><b>${esc(itemTitle(i.id))}</b></a>`).join('')}</div></div>`:''}`;
+  const sv=$('#mchart'); if(sv){ const draw=()=>{ const W=sv.clientWidth,H=sv.clientHeight,P=28; const pts=mocks.map((m,j)=>[P+(W-2*P)*(mocks.length>1?j/(mocks.length-1):0.5),H-P-(H-2*P)*(m.total/m.max)]); sv.innerHTML=`<line x1="${P}" x2="${W-P}" y1="${H-P}" y2="${H-P}" stroke="#eadfcd"/><text x="2" y="${P}" font-size="11" fill="#6f5d52">100%</text><text x="2" y="${H-P}" font-size="11" fill="#6f5d52">0</text><polyline fill="none" stroke="#7a1e2c" stroke-width="2.5" points="${pts.map(p=>p.join(',')).join(' ')}"/>${pts.map((p,j)=>`<circle cx="${p[0]}" cy="${p[1]}" r="4" fill="#7a1e2c"/><text x="${p[0]}" y="${p[1]-9}" font-size="11" text-anchor="middle" fill="#2a1a14">${mocks[j].total}/${mocks[j].max}</text>`).join('')}`; }; new ResizeObserver(draw).observe(sv); }
+}
+
+/* ---- parent ---- */
+function vParent(){
+  const pend=Object.values(S.mocks).filter(m=>m.needsRating).sort((a,b)=>b.ts-a.ts);
+  const wk=now()-7*86400000; const ses=Object.values(S.sessions).filter(s=>s.start>wk); const mins=Math.round(ses.reduce((a,s)=>a+Math.min(120,(s.end-s.start)/60000),0));
+  const at=Object.values(S.attempts).filter(a=>a.ts>wk); const items=new Set(at.map(a=>a.item)).size; const sh=at.filter(a=>a.shruti?.score!=null); const shA=sh.length?Math.round(sh.reduce((x,a)=>x+a.shruti.score,0)/sh.length):null;
+  const days=new Set([...at,...Object.values(S.facts).filter(f=>f.ts>wk)].map(a=>dayKey(a.ts))).size; const M=metrics();
+  view.innerHTML=`<h1>Parent</h1>
+  <div class="card"><h3>Rate mock tests</h3>${pend.length?pend.map(m=>`<div class="spread" style="padding:8px 0;border-bottom:1px solid var(--line)"><span>${new Date(m.ts).toLocaleString()} · ${m.type} · ${m.attempts.length} items</span><a class="btn primary sm" href="#rate-${m.id}">Rate</a></div>`).join(''):'<p class="mute" style="margin:0">Nothing waiting.</p>'}</div>
+  <div class="card"><h3>This week</h3><div class="grid2" style="gap:10px">${[['Practice days',days+'/7'],['Minutes practised',mins],['Items practised',items],['Mock tests',Object.values(S.mocks).filter(m=>m.ts>wk).length],['Avg shruti score',shA??'–'],['Exam readiness',M.readiness+'/50']].map(([l,v])=>`<div><div class="small mute">${l}</div><div style="font-family:'Baloo 2';font-size:28px;font-weight:700">${v}</div></div>`).join('')}</div></div>
+  <div class="grid2"><a class="card" href="#links" style="text-decoration:none;color:inherit;margin:0"><h3>Recording links</h3><p class="mute small" style="margin:0">${ITEMS.filter(i=>!videoLinks(i.id).length).length} items have no recording. Add YouTube or other links.</p></a>
+  <a class="card" href="#settings" style="text-decoration:none;color:inherit;margin:0"><h3>Settings & Drive</h3><p class="mute small" style="margin:0">Google Drive, Guru name, shruti, Bhajan, backup</p></a></div>`;
+}
+function vRate(mid){
+  const m=S.mocks[mid]; if(!m){ location.hash='#parent'; return; }
+  const ats=m.attempts.map(id=>S.attempts[id]).filter(Boolean);
+  view.innerHTML=`<a href="#parent" class="small">← Parent</a><h1 style="margin-top:6px">Rate mock test</h1><p class="mute">${new Date(m.ts).toLocaleString()} · ${m.type}. Listen to each item and give marks the way the examiner would. Remarks must say why marks were taken off.</p>
+  ${ats.map(a=>{ const it=itemInfo(a.item); const s=SEC[it.sec]; return `<div class="card" data-a="${a.id}"><div class="spread"><div><div class="small mute">${esc(s.n)} · ${a.sc?'student’s choice':'examiner’s choice'}</div><h3 style="margin:2px 0">${esc(it.t)}</h3></div>${a.unprepared?'<span class="pill lv-learning">Not prepared · 0</span>':ringSvg(a.shruti?.score??null).replace('class="score-ring"','class="score-ring" style="width:64px;height:64px"')}</div>
+   ${a.unprepared?'':`<div class="aud small mute">Loading recording…</div>${a.shruti?.tips?`<div class="small mute">${a.shruti.tips.map(esc).join(' · ')}</div>`:''}
+   <div class="spread" style="margin-top:10px"><b>Marks (max ${a.max})</b><div class="stepper"><button data-d="-0.5" aria-label="less">−</button><output>${a.pm??a.max}</output><button data-d="0.5" aria-label="more">+</button></div></div>
+   <div class="items" style="margin-top:8px">${REMARKS.map(r=>`<button class="chip rm" style="background:#f3ece1;color:var(--ink)" aria-pressed="${(a.rm||[]).includes(r)}">${esc(r)}</button>`).join('')}</div>
+   <input type="text" class="rtxt" placeholder="Specific remark (e.g. lost tāḷa in 3rd speed)" value="${esc(a.rtxt||'')}" style="margin-top:8px">`}</div>`; }).join('')}
+  <button class="btn primary big" id="rsave">Save ratings</button>`;
+  view.querySelectorAll('[data-a]').forEach(async card=>{ const a=S.attempts[card.dataset.a]; if(a.unprepared) return;
+    const out=$('output',card); card.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{ out.textContent=clamp(+out.textContent+ +b.dataset.d,0,a.max); });
+    card.querySelectorAll('.rm').forEach(b=>{ const upd=()=>{ const on=b.getAttribute('aria-pressed')==='true'; b.style.background=on?'var(--gold)':'#f3ece1'; }; upd(); b.onclick=()=>{ b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true'); upd(); }; });
+    const aud=$('.aud',card); try{ const u=await audioUrl(a); aud.innerHTML= u?`<audio controls src="${u}" style="width:100%"></audio>`: a.audio?.deleted?'Recording removed (only the latest 2 per item are kept).':'Recording is in Google Drive. Connect Drive (top bar) to play it.'; }catch(e){ aud.textContent='Could not load recording.'; } });
+  $('#rsave').onclick=()=>{ let prac=0;
+    for(const card of view.querySelectorAll('[data-a]')){ const a=S.attempts[card.dataset.a]; if(!a.unprepared){ a.pm=+$('output',card).textContent; a.rm=[...card.querySelectorAll('.rm')].filter(b=>b.getAttribute('aria-pressed')==='true').map(b=>b.textContent); a.rtxt=$('.rtxt',card).value.trim(); a.ratedAt=now(); put('attempts',a); prac+=a.pm; } }
+    m.prac=Math.round(prac*2)/2; m.needsRating=false; m.total=m.prac+(m.oral||0)+(m.ideals||0); put('mocks',m); toast('Ratings saved: '+m.total+'/'+m.max); location.hash='#parent'; };
+}
+function vLinks(){
+  view.innerHTML=`<a href="#parent" class="small">← Parent</a><h1 style="margin-top:6px">Recording links</h1><p class="mute">Add links for items that have no recording, or extra ones (YouTube, Drive, any https link).</p>
+  <div class="card"><label class="f" for="lItem">Item</label><select id="lItem">${SECTIONS.map(s=>`<optgroup label="${esc(s.n)}">${ITEMS.filter(i=>i.sec===s.id).map(i=>`<option value="${i.id}">${esc(itemTitle(i.id))}${videoLinks(i.id).length?'':' (none yet)'}</option>`).join('')}</optgroup>`).join('')}</select>
+  <div id="lList" style="margin:12px 0"></div>
+  <label class="f" for="lUrl">Link (https://…)</label><input type="url" id="lUrl" placeholder="https://www.youtube.com/watch?v=…">
+  <label class="f" for="lLab">Label (optional)</label><input type="text" id="lLab" placeholder="e.g. Guru’s recording, starts at 2:10">
+  <div class="row" style="margin-top:12px"><button class="btn primary" id="lAdd">Add link</button></div></div>`;
+  const list=()=>{ const id=$('#lItem').value; const it=ITEM[id]; const built=(it.v||[]).map(v=>`<div class="spread small" style="padding:6px 0;border-bottom:1px solid var(--line)"><span>▶ Sangeeta Bhārati video (built in)</span></div>`).join(''); const ex=Object.values(S.links).filter(l=>l.item===id&&!l.del).map(l=>`<div class="spread small" style="padding:6px 0;border-bottom:1px solid var(--line)"><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label||l.url)}</a><button class="btn ghost sm" data-del="${l.id}">Remove</button></div>`).join(''); $('#lList').innerHTML=built+ex||'<p class="mute small">No recordings yet.</p>'; view.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{ const l=S.links[b.dataset.del]; l.del=true; put('links',l); list(); }); };
+  $('#lItem').onchange=list; list();
+  $('#lAdd').onclick=()=>{ const url=$('#lUrl').value.trim(); if(!/^https:\/\//.test(url)){ toast('Please enter a link starting with https://'); return; } put('links',{id:uid(),item:$('#lItem').value,url,label:$('#lLab').value.trim()}); $('#lUrl').value=''; $('#lLab').value=''; list(); toast('Link added'); };
+}
+function vSettings(){
+  const st=S.settings; const b=st.bhajan||{t:COMPS['bhajan-1'].t,r:'hamsadhvani',tl:'eka',c:'Unknown',b:'Sanskrit'};
+  view.innerHTML=`<a href="#parent" class="small">← Parent</a><h1 style="margin-top:6px">Settings</h1>
+  <div class="card"><h3>Google Drive</h3><p class="small mute">Progress is saved on this device first, then synced to <b>My Drive › Sangeeta Prep</b> (progress.json, daily snapshots, recordings). The app can only see files it created.</p>
+   <label class="f" for="cid">Google OAuth Client ID</label><input type="text" id="cid" value="${esc(clientId())}" ${CONFIG.clientId?'disabled':''} placeholder="xxxx.apps.googleusercontent.com">
+   <div class="row" style="margin-top:10px"><button class="btn primary" id="cidSave">${tokenOk()?'Sync now':'Save & connect'}</button><span class="small mute">${DRIVE.last?'Last sync '+ago(DRIVE.last):''}${DRIVE.err?' · '+esc(DRIVE.err):''}</span></div></div>
+  <div class="card"><h3>Student</h3><label class="f" for="guru">Guru’s name (as she should say it)</label><input type="text" id="guru" value="${esc(st.guru||'')}">
+   <label class="f" for="sa">Shruti: Sa frequency (Hz)</label><select id="sa">${[['G3 · 196 Hz',196],['G#3 · 207.7 Hz',207.65],['G4 · 392 Hz',392],['G#4 · 415.3 Hz',415.3]].map(([l,v])=>`<option value="${v}" ${+st.sa===v?'selected':''}>${l}</option>`).join('')}</select><p class="small mute">The analysis detects the octave automatically. This also sets the tanpura pitch.</p>
+   <label class="f" for="tvol">Tanpura volume</label><input type="range" id="tvol" min="0.1" max="1" step="0.05" value="${+ls.get('sp_tvol')||0.7}" style="width:100%"></div>
+  <div class="card"><h3>Bhajan</h3><label class="f" for="bt">Title</label><input type="text" id="bt" value="${esc(b.t)}">
+   <div class="grid2" style="gap:10px"><div><label class="f" for="br">Rāga</label><select id="br">${Object.entries(RAGAS).map(([k,v])=>`<option value="${k}" ${k===b.r?'selected':''}>${esc(v.n)}</option>`).join('')}</select></div><div><label class="f" for="btl">Tāḷa</label><select id="btl">${Object.entries(TALAS).map(([k,v])=>`<option value="${k}" ${k===b.tl?'selected':''}>${esc(v.n)}</option>`).join('')}</select></div>
+   <div><label class="f" for="bc">Composer</label><input type="text" id="bc" value="${esc(b.c)}"></div><div><label class="f" for="bb">Language</label><input type="text" id="bb" value="${esc(b.b)}"></div></div></div>
+  <div class="row"><button class="btn primary big" id="sSave">Save settings</button></div>
+  <div class="card" style="margin-top:14px"><h3>Backup</h3><p class="small mute">Extra safety on top of Drive: download all progress as a file, or restore one (it’s merged, nothing is lost).</p><div class="row"><button class="btn" id="exp">Download backup</button><label class="btn" for="imp">Restore from file</label><input type="file" id="imp" accept="application/json,.json" class="hide"></div></div>`;
+  $('#cidSave').onclick=async()=>{ const v=$('#cid').value.trim(); if(!CONFIG.clientId){ if(!/apps\.googleusercontent\.com$/.test(v)){ toast('That doesn’t look like a Client ID'); return; } ls.set('sp_clientId',v); } renderSync(); if(tokenOk()) sync(); else await connectDrive(true); };
+  $('#tvol').oninput=e=>{ ls.set('sp_tvol',e.target.value); if(tanpura.gain) tanpura.gain.gain.value=+e.target.value; };
+  $('#sSave').onclick=()=>{ const bh={t:$('#bt').value.trim()||COMPS['bhajan-1'].t,r:$('#br').value,tl:$('#btl').value,c:$('#bc').value.trim()||'Unknown',b:$('#bb').value.trim()||'Sanskrit'};
+    S.settings={...S.settings,guru:$('#guru').value.trim(),sa:+$('#sa').value,bhajan:bh,u:now()}; persist(); if(tanpura.on){ tanpuraStop(); tanpuraStart(); } toast('Saved'); };
+  $('#exp').onclick=()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'})); a.download='sangeeta-prep-backup-'+dayKey(now())+'.json'; document.body.appendChild(a); a.click(); a.remove(); };
+  $('#imp').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ const d=JSON.parse(await f.text()); S=mergeState(S,d); persist(); toast('Backup merged'); }catch(err){ toast('Could not read that file'); } };
+}
+
+/* ====================== BOOT ====================== */
+(async()=>{
+  try{ db=await idb(); const saved=await iget('kv','state'); if(saved) S=mergeState(blankState(),saved); }catch(e){ console.error(e); view.innerHTML='<div class="banner warn">This browser blocked on-device storage (private mode?). Progress will only be saved to Google Drive.</div>'; }
+  try{ const t=JSON.parse(ls.get('sp_tok')||'null'); if(t&&t.e>now()){ DRIVE.token=t.t; DRIVE.exp=t.e; } }catch(e){}
+  try{ navigator.storage?.persist?.(); }catch(e){}
+  renderSync(); route(); if(tokenOk()) sync();
+  if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+  window.__SP={S:()=>S,analyzeSamples,ITEMS,metrics};
+})();
+}
+</script>
+</body>
+</html>
